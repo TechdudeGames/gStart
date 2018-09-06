@@ -19,8 +19,8 @@ serveroffline = True
 while True:
 	needtostart = gStartBackend.checkmail(allowed_senders, serverpass)
 	if needtostart:
-		os.system("screen %s" % servercommand)
+		os.system(servercommand)
 		needtostart = False
-		gStartBackend.checkmail(allowed_senders, serverpass)
+		gStartBackend.markcorrectpassemail(allowed_senders, serverpass)
 		#Insures that any email with the password that was sent with the password is not going to retrigger the server immediatly
 	time.sleep(30)

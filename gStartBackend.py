@@ -35,7 +35,7 @@ def checkmail(valid_senders, password):
 				if msg == password:
 					print("[gStartBackend] Password correct! Starting up")
 					startserver = True
-					service.users().messages().modify(userId='me', id=current_email['id'],body={'removeLabelIds': ['UNREAD']}).execute()
+					service.users().messages().delete(userId='me', id=current_email['id']).execute()
 				else:
 					print("[gStartBackend] Password was incorrect.")
 		if startserver == True:
@@ -45,3 +45,33 @@ def checkmail(valid_senders, password):
 	except:
 		print("[gStartBackend] An error occur while attempting to run the email checker.")
 		return False
+	
+def markcorrectpassemail(valid_senders, password):
+	checkfortext = False
+	unreademail = service.users().messages().list(userId='me', labelIds=['INBOX', "UNREAD"]).execute()
+	try :
+		mailtolookat = unreademail['messages']
+	except:
+		print("[gStartBackend] No new mail.")
+		return False
+	try:
+		for selectedmail in mailtolookat:
+			checkfortext = False
+			current_email = service.users().messages().get(userId='me', id=selectedmail['id']).execute()
+			metadata = current_email['payload']['headers']
+			for parse in metadata:
+				if parse['name'] == 'From':
+					print("[gStartBackend] Got an email from:", parse['value'])
+					for issender in valid_senders:
+						if issender == parse['value']:
+							print("[gStartBackend] Looks like someone I know, let's check the body of the email")
+							checkfortext = True
+			if checkfortext:
+				msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
+				if msg == password:
+					print("[gStartBackend] Password correct, marking as read")
+					service.users().messages().delete(userId='me', id=current_email['id']).execute()
+				else:
+					print("[gStartBackend] Password was incorrect.")
+	except:
+		print("[gStartBackend] An error occur while attempting to run the email checker.")

@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="tk.Toplevel" id="GUI">
+    <child>
+      <object class="tk.Label" id="TItle">
+        <property name="font">{Ubuntu} 24 {}</property>
+        <property name="justify">left</property>
+        <property name="relief">flat</property>
+        <property name="state">normal</property>
+        <property name="text" translatable="yes">	MailWatcher Manager	</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="sticky">n</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Label" id="currentpasslabel">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="pady">20</property>
+        <property name="text" translatable="yes">Current Server Password:
+</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">15</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Label" id="currentpass">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="pady">10</property>
+        <property name="text" translatable="yes">Getting server pass...
+</property>
+        <property name="textvariable">string:serverpass</property>
+        <layout>
+          <property name="propagate">True</property>
+          <property name="row">15</property>
+          <property name="sticky">e</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Label" id="passchangelabel">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="text" translatable="yes">Password Change:</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">16</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Entry" id="newpassbox">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="textvariable">string:newpass</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">16</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Button" id="confirmnewpass">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="pady">0</property>
+        <property name="text" translatable="yes">Confirm</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">16</property>
+          <property name="sticky">e</property>
+        </layout>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -73,4 +73,4 @@ def markcorrectpassemail(valid_senders, password):
 					print("[gStartBackend] Password was incorrect.")
 				service.users().messages().delete(userId='me', id=current_email['id']).execute()
 	except:
-		print("[gStartBackend] An error occur while attempting to run the email checker.")
+		print("[gStartBackend] An error occur while attempting to run.")

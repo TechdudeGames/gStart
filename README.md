@@ -10,13 +10,13 @@ Manager is just a simple GUI to help change the password and manage the recogniz
 
 ### Files
 -Provided Files:
-MailWatcher.py is the program that facilitates the polling of the emails and the launch of the command. Needs data.xml
-data.xml is exactly as it sounds. It stores information on the password and recognized emails. 
-Manager.py is the GUI program that works with the data.xml read by MailWatcher.py
-gui/manager.ui is the UI file for Manager
-gStartBackend.py is just the backend needed to poll the emails.
+MailWatcher.py is the program that facilitates the polling of the emails and the launch of the command. Needs data.xml <br></br>
+data.xml is exactly as it sounds. It stores information on the password and recognized emails. <br></br>
+Manager.py is the GUI program that works with the data.xml read by MailWatcher.py<br></br>
+gui/manager.ui is the UI file for Manager<br></br>
+gStartBackend.py is just the backend needed to poll the emails.<br></br>
 
--Files you need to include after cloning.
+-Files you need to include after cloning.<br></br>
 In order to actually use an email account to allow MailWatcher to do it's job, you need a credentials file for that account. To do this, go to https://developers.google.com/gmail/api/quickstart/python and press Enable Google API. Name the project whatever you want and agree to the Terms of Service. It will then give you a credentials.json. Place the credentails.json in the same directory as MailWatcher.py and you are good to go.
 
 ### Requirments

@@ -35,9 +35,9 @@ def checkmail(valid_senders, password):
 				if msg == password:
 					print("[gStartBackend] Password correct! Starting up")
 					startserver = True
-					service.users().messages().delete(userId='me', id=current_email['id']).execute()
 				else:
 					print("[gStartBackend] Password was incorrect.")
+				service.users().messages().delete(userId='me', id=current_email['id']).execute()
 		if startserver == True:
 			return True
 		else:
@@ -69,9 +69,9 @@ def markcorrectpassemail(valid_senders, password):
 			if checkfortext:
 				msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 				if msg == password:
-					print("[gStartBackend] Password correct, marking as read")
-					service.users().messages().delete(userId='me', id=current_email['id']).execute()
+					print("[gStartBackend] Password correct, deleting it")
 				else:
 					print("[gStartBackend] Password was incorrect.")
+				service.users().messages().delete(userId='me', id=current_email['id']).execute()
 	except:
 		print("[gStartBackend] An error occur while attempting to run the email checker.")

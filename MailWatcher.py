@@ -24,9 +24,7 @@ while True:
 	if needtostart:
 		os.chdir(serverdir)
 		os.system(servercommand)
-		needtostart = False
 		os.chdir(origpath)
 		gStartBackend.markcorrectpassemail(allowed_senders, serverpass)
-		time.sleep(5)
 		#Insures that any email with the password that was sent with the password is not going to retrigger the server immediatly
-	#time.sleep(30)
+	time.sleep(10)

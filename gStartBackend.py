@@ -52,7 +52,7 @@ def markcorrectpassemail(valid_senders, password):
 	try :
 		mailtolookat = unreademail['messages']
 	except:
-		print("[gStartBackend] No new mail.")
+		print("")
 	try:
 		for selectedmail in mailtolookat:
 			checkfortext = False

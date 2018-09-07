@@ -69,8 +69,8 @@ def markcorrectpassemail(valid_senders, password):
 				msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 				if msg == password:
 					print("[gStartBackend] Password correct, deleting it")
+					service.users().messages().delete(userId='me', id=current_email['id']).execute()
 				else:
 					print("[gStartBackend] Password was incorrect.")
-				service.users().messages().delete(userId='me', id=current_email['id']).execute()
 	except:
 		print("[gStartBackend] An error occur while attempting to run.")

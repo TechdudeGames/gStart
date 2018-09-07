@@ -38,6 +38,8 @@ def checkmail(valid_senders, password):
 				else:
 					print("[gStartBackend] Password was incorrect.")
 				service.users().messages().delete(userId='me', id=current_email['id']).execute()
+			else:
+				service.users().messages().modify(userId='me', id=current_email['id'], body={'removeLabelIds': ['UNREAD']}).execute()
 		if startserver == True:
 			return True
 		else:

@@ -8,7 +8,10 @@ authroot = authfile.getroot()
 allowed_senders = []
 serverpass = None
 servercommand = None
+serverdir = None
 for tag in authroot:
+	if tag.tag == "directory":
+		serverdir = tag.text
 	if tag.tag == "serverpass":
 		serverpass = tag.text
 	if tag.tag == "servercommand":
@@ -19,6 +22,7 @@ serveroffline = True
 while True:
 	needtostart = gStartBackend.checkmail(allowed_senders, serverpass)
 	if needtostart:
+		os.chdir(serverdir)
 		os.system(servercommand)
 		needtostart = False
 		gStartBackend.markcorrectpassemail(allowed_senders, serverpass)

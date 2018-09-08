@@ -25,27 +25,9 @@ for tag in authroot:
 currentdir = os.getcwd()
 
 
-# GUI class
-class managergui(pygubu.TkApplication):
-	def __init__(self, master):
-		# 1: Create a builder
-		self.master = master
-		self.builder = builder = pygubu.Builder()
-		# 2: Load an ui file
-		builder.add_from_file(os.path.join(currentdir, "gui", "manager.ui"))
-		self.mainwindow = builder.get_object('GUI', self.master)
-		callbacks = {
-			'changepass': "changepass Callback"
-		}
-		builder.connect_callbacks(self)
-		builder.connect_callbacks(callbacks)
-		builder.get_variable('serverpass').set(serverpass)
-	
-	def changepass(self):
-		print(self.builder.get_variable("newpass").get())
 
 
-class Application:
+class managergui:
 	def __init__(self, master):
 		self.master = master
 		# 1: Create a builder
@@ -57,7 +39,6 @@ class Application:
 		}
 		builder.connect_callbacks(self)
 		builder.connect_callbacks(callbacks)
-	
 	def changepass(self):
 		print(self.builder.get_variable("newpass").get())
 
@@ -65,6 +46,6 @@ class Application:
 if __name__ == '__main__':
 	root = tk.Tk()
 	root.title("Manager GUI")
-	app = Application(root)
-	print(Application)
+	app = managergui(root)
+	print(managergui)
 	root.mainloop()

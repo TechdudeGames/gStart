@@ -11,7 +11,8 @@
     <child>
       <object class="tk.Label" id="Title">
         <property name="font">{Ubutnu} 24 {}</property>
-        <property name="text" translatable="yes">	MailWatcher Manager</property>
+        <property name="padx">100</property>
+        <property name="text" translatable="yes">MailWatcher Manager</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -23,7 +24,7 @@
     <child>
       <object class="tk.Label" id="lbl_currentpass">
         <property name="font">{Ubuntu} 12 {}</property>
-        <property name="padx">10</property>
+        <property name="padx">0</property>
         <property name="text" translatable="yes">Current Server Password:</property>
         <layout>
           <property name="column">0</property>
@@ -34,11 +35,12 @@
       </object>
     </child>
     <child>
-      <object class="tk.Label" id="displaycurrentpass">
+      <object class="ttk.Entry" id="tb_currentpass">
         <property name="font">{Ubuntu} 12 {}</property>
-        <property name="pady">0</property>
-        <property name="text" translatable="yes">Getting server pass...</property>
+        <property name="state">readonly</property>
+        <property name="text" translatable="yes">Getting current password...</property>
         <property name="textvariable">string:serverpass</property>
+        <property name="width">40</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -72,7 +74,7 @@
       </object>
     </child>
     <child>
-      <object class="tk.Button" id="btnconfirm">
+      <object class="tk.Button" id="btn_newpassconfirm">
         <property name="command">changepass</property>
         <property name="font">{Ubuntu} 12 {}</property>
         <property name="text" translatable="yes">Confirm</property>
@@ -80,6 +82,69 @@
           <property name="column">0</property>
           <property name="propagate">True</property>
           <property name="row">16</property>
+          <property name="sticky">e</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Label" id="lblcurrentcmdpath">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="pady">20</property>
+        <property name="text" translatable="yes">Current start directory</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">17</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Entry" id="tb_currentdir">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="state">readonly</property>
+        <property name="text" translatable="yes">Getting current start dir...</property>
+        <property name="textvariable">string:startdir</property>
+        <property name="width">40</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">17</property>
+          <property name="sticky">e</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Label" id="lbl_changedir">
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="text" translatable="yes">Change start directory:</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">18</property>
+          <property name="sticky">w</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="pygubu.builder.widgets.pathchooserinput" id="pc_startdir">
+        <property name="textvariable">string:newpathdir</property>
+        <property name="type">directory</property>
+        <layout>
+          <property name="propagate">True</property>
+          <property name="row">18</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Button" id="btn_dirconfirm">
+        <property name="command">changedir</property>
+        <property name="font">{Ubuntu} 12 {}</property>
+        <property name="text" translatable="yes">Confirm</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">18</property>
           <property name="sticky">e</property>
         </layout>
       </object>

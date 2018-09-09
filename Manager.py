@@ -42,7 +42,6 @@ if (os.path.isfile('data.xml')):
 			builder.connect_callbacks(callbacks)
 		
 		def changepass(self):
-			print(self.builder.get_variable("newpass").get())
 			serverpass_parse = elementtree.parse("data.xml")
 			serverpass_elm = serverpass_parse.findall("serverpass")[0]
 			serverpass_elm.text = self.builder.get_variable("newpass").get()
@@ -50,7 +49,6 @@ if (os.path.isfile('data.xml')):
 			self.builder.get_variable("serverpass").set(self.builder.get_variable("newpass").get())
 		
 		def changedir(self):
-			print(self.builder.get_variable("newpathdir").get())
 			serverdir_parse = elementtree.parse("data.xml")
 			serverdir_elm = serverdir_parse.findall("directory")[0]
 			serverdir_elm.text = self.builder.get_variable("newpathdir").get()

@@ -5,14 +5,14 @@ import os
 import sys
 import xml.etree.cElementTree as elementtree
 if (os.path.isfile('data.xml')):
-	authfile = elementtree.ElementTree(file="data.xml")
-	authroot = authfile.getroot()
+	datafile = elementtree.ElementTree(file="data.xml")
+	dataroot = datafile.getroot()
 	# Getting the password and availible senders
 	allowed_senders = []
 	serverpass = None
 	servercommand = None
 	serverdir = None
-	for tag in authroot:
+	for tag in dataroot:
 		if tag.tag == "directory":
 			serverdir = tag.text
 		if tag.tag == "serverpass":
@@ -32,21 +32,36 @@ if (os.path.isfile('data.xml')):
 			self.builder = builder = pygubu.Builder()
 			builder.add_from_file(os.path.join(currentdir, "gui", "manager.ui"))
 			self.mainwindow = builder.get_object('GUI', master)
-			builder.get_variable('serverpass').set(serverpass)
+			builder.get_variable("serverpass").set(serverpass)
+			builder.get_variable("startdir").set(serverdir)
 			callbacks = {
+				"changepass": None,
+				"changedir" : None
 			}
 			builder.connect_callbacks(self)
 			builder.connect_callbacks(callbacks)
 		
 		def changepass(self):
 			print(self.builder.get_variable("newpass").get())
+			serverpass_parse = elementtree.parse("data.xml")
+			serverpass_elm = serverpass_parse.findall("serverpass")[0]
+			serverpass_elm.text = self.builder.get_variable("newpass").get()
+			serverpass_parse.write("data.xml")
+			self.builder.get_variable("serverpass").set(self.builder.get_variable("newpass").get())
+		
+		def changedir(self):
+			print(self.builder.get_variable("newpathdir").get())
+			serverdir_parse = elementtree.parse("data.xml")
+			serverdir_elm = serverdir_parse.findall("directory")[0]
+			serverdir_elm.text = self.builder.get_variable("newpathdir").get()
+			serverdir_parse.write("data.xml")
+			self.builder.get_variable("startdir").set(self.builder.get_variable("newpathdir").get())
 	
 	
 	if __name__ == '__main__':
 		root = tk.Tk()
 		root.title("Manager GUI")
 		app = managergui(root)
-		print(managergui)
 		root.mainloop()
 else:
 	print("I can't find data.xml. uwu")

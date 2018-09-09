@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 import pygubu
 import os
-import sys
 import xml.etree.cElementTree as elementtree
 if (os.path.isfile('data.xml')):
 	datafile = elementtree.ElementTree(file="data.xml")

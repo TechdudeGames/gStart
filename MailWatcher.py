@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import gStartBackend
 import xml.etree.cElementTree as elementtree
 import os

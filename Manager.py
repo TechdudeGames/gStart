@@ -3,6 +3,7 @@ from tkinter import messagebox
 import pygubu
 import os
 import xml.etree.cElementTree as elementtree
+import platform
 if (os.path.isfile('data.xml')):
 	datafile = elementtree.ElementTree(file="data.xml")
 	dataroot = datafile.getroot()
@@ -12,7 +13,7 @@ if (os.path.isfile('data.xml')):
 	servercommand = None
 	serverdir = None
 	for tag in dataroot:
-		if tag.tag == "directory":
+		if tag.tag == "serverdirectory":
 			serverdir = tag.text
 		if tag.tag == "serverpass":
 			serverpass = tag.text
@@ -32,10 +33,10 @@ if (os.path.isfile('data.xml')):
 			builder.add_from_file(os.path.join(currentdir, "gui", "manager.ui"))
 			self.mainwindow = builder.get_object('GUI', master)
 			builder.get_variable("serverpass").set(serverpass)
-			builder.get_variable("startdir").set(serverdir)
+			builder.get_variable("fullcmd").set(serverdir+servercommand)
 			callbacks = {
 				"changepass": None,
-				"changedir" : None
+				"changecmd" : None
 			}
 			builder.connect_callbacks(self)
 			builder.connect_callbacks(callbacks)
@@ -45,14 +46,32 @@ if (os.path.isfile('data.xml')):
 			serverpass_elm = serverpass_parse.findall("serverpass")[0]
 			serverpass_elm.text = self.builder.get_variable("newpass").get()
 			serverpass_parse.write("data.xml")
-			self.builder.get_variable("serverpass").set(self.builder.get_variable("newpass").get())
+			self.builder.get_variable("fullcmd").set(serverdir+servercommand)
 		
-		def changedir(self):
+		def changecmd(self):
+			fullcmd = self.builder.get_variable("newcmd").get()
+			fullcmdlist = list(fullcmd)
+			fullcmdlist.reverse()
+			if platform.win32_ver() == ('', '', '', ''):
+				lastslash = fullcmdlist.index("/")
+			else:
+				lastslash = fullcmdlist.index("\\")
+			onlycmd = fullcmdlist[:lastslash]
+			onlycmd.reverse()
+			cmd = ''.join(onlycmd)
+			onlypath = fullcmdlist[lastslash:]
+			onlypath.reverse()
+			path = ''.join(onlypath)
 			serverdir_parse = elementtree.parse("data.xml")
-			serverdir_elm = serverdir_parse.findall("directory")[0]
-			serverdir_elm.text = self.builder.get_variable("newpathdir").get()
+			serverdir_elm = serverdir_parse.findall("serverdirectory")[0]
+			serverdir_elm.text = path
 			serverdir_parse.write("data.xml")
-			self.builder.get_variable("startdir").set(self.builder.get_variable("newpathdir").get())
+			#
+			servercmd_parse = elementtree.parse("data.xml")
+			servercmd_elm = servercmd_parse.findall("servercommand")[0]
+			servercmd_elm.text = cmd
+			servercmd_parse.write("data.xml")
+			self.builder.get_variable("fullcmd").set(path+cmd)
 	
 	
 	if __name__ == '__main__':

@@ -10,7 +10,7 @@ serverpass = None
 servercommand = None
 serverdir = None
 for tag in authroot:
-	if tag.tag == "directory":
+	if tag.tag == "serverdirectory":
 		serverdir = tag.text
 	if tag.tag == "serverpass":
 		serverpass = tag.text

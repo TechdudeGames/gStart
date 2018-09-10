@@ -90,7 +90,7 @@
       <object class="tk.Label" id="lblcurrentcmdpath">
         <property name="font">{Ubuntu} 12 {}</property>
         <property name="pady">20</property>
-        <property name="text" translatable="yes">Current start directory</property>
+        <property name="text" translatable="yes">Current command:</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -100,12 +100,12 @@
       </object>
     </child>
     <child>
-      <object class="tk.Entry" id="tb_currentdir">
+      <object class="tk.Entry" id="tb_currentcmd">
         <property name="font">{Ubuntu} 12 {}</property>
         <property name="state">readonly</property>
-        <property name="text" translatable="yes">Getting current start dir...</property>
-        <property name="textvariable">string:startdir</property>
-        <property name="width">40</property>
+        <property name="text" translatable="yes">Getting current cmd</property>
+        <property name="textvariable">string:fullcmd</property>
+        <property name="width">43</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -115,9 +115,9 @@
       </object>
     </child>
     <child>
-      <object class="tk.Label" id="lbl_changedir">
+      <object class="tk.Label" id="lbl_changecmd">
         <property name="font">{Ubuntu} 12 {}</property>
-        <property name="text" translatable="yes">Change start directory:</property>
+        <property name="text" translatable="yes">Change command:</property>
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -128,8 +128,8 @@
     </child>
     <child>
       <object class="pygubu.builder.widgets.pathchooserinput" id="pc_startdir">
-        <property name="textvariable">string:newpathdir</property>
-        <property name="type">directory</property>
+        <property name="textvariable">string:newcmd</property>
+        <property name="type">file</property>
         <layout>
           <property name="propagate">True</property>
           <property name="row">18</property>
@@ -137,8 +137,8 @@
       </object>
     </child>
     <child>
-      <object class="tk.Button" id="btn_dirconfirm">
-        <property name="command">changedir</property>
+      <object class="tk.Button" id="btn_cmdconfirm">
+        <property name="command">changecmd</property>
         <property name="font">{Ubuntu} 12 {}</property>
         <property name="text" translatable="yes">Confirm</property>
         <layout>

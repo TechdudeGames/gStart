@@ -1,5 +1,4 @@
-from googleapiclient.discovery import build, HttpError
-import googleapiclient.errors
+from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 SCOPES = 'https://mail.google.com/'
@@ -36,19 +35,13 @@ def checkmail(valid_senders, password):
 				msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 				if msg == password:
 					print("[gStartBackend] Password correct! Starting up")
-					try:
-						service.users().messages().delete(userId='me', id=current_email['id']).execute()
-					except googleapiclient.errors.HttpError:
-						print("[gStartBackend] We had an error on our end, which should resolve the next time this runs")
+					service.users().messages().delete(userId='me', id=current_email['id']).execute()
 					startserver = True
 				else:
 					print("[gStartBackend] Password was incorrect.")
 			else:
-				try:
-					service.users().messages().modify(userId='me', id=current_email['id'],
+				service.users().messages().modify(userId='me', id=current_email['id'],
 				                                  body={'removeLabelIds': ['UNREAD']}).execute()
-				except googleapiclient.errors.HttpError:
-					print("[gStartBackend] We had an error on our end, which should resolve the next time this runs")
 		if startserver == True:
 			return True
 		else:
@@ -80,15 +73,6 @@ def markcorrectpassemail(valid_senders, password):
 				msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 				if msg == password:
 					print("[gStartBackend] Password correct, deleting it")
-					try:
-						service.users().messages().delete(userId='me', id=current_email['id']).execute()
-					except googleapiclient.errors.HttpError:
-						print("[gStartBackend] We had an error on our end, which should resolve the next time this runs")
+					service.users().messages().delete(userId='me', id=current_email['id']).execute()
 				else:
 					print("[gStartBackend] Password was incorrect.")
-			else:
-				try:
-					service.users().messages().modify(userId='me', id=current_email['id'],
-				                                  body={'removeLabelIds': ['UNREAD']}).execute()
-				except googleapiclient.errors.HttpError:
-					print("[gStartBackend] We had an error on our end, which should resolve the next time this runs")

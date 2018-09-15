@@ -60,7 +60,7 @@ if (os.path.isfile('data.xml')):
 			onlycmd = fullcmdlist[:lastslash]
 			onlycmd.reverse()
 			if platform.win32_ver() == ('', '', '', ''):
-				onlycmd.insert("./")
+				onlycmd.insert(0, "./")
 			else:
 				lastslash = fullcmdlist.index(".\\")
 			cmd = ''.join(onlycmd)

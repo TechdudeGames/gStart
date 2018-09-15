@@ -59,7 +59,7 @@ if (os.path.isfile('data.xml')):
 				lastslash = fullcmdlist.index("\\")
 			onlycmd = fullcmdlist[:lastslash]
 			onlycmd.reverse()
-			cmd = ''.join(onlycmd)
+			cmd = './'.join(onlycmd)
 			onlypath = fullcmdlist[lastslash:]
 			onlypath.reverse()
 			path = ''.join(onlypath)

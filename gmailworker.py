@@ -1,4 +1,5 @@
 import googleapiclient.errors
+import time
 def getmail(service, labels=["INBOX", "UNREAD"]):
 	'''
 	:param service: The gmail service variable used to access the gmail account
@@ -11,9 +12,9 @@ def getmail(service, labels=["INBOX", "UNREAD"]):
 	for i in range(0,3):
 		try:
 			mail = service.users().messages().list(userId='me', labelIds=labels).execute()
-			i = 4 #A sneaky roundabout way of stopping the loop if we got it the first time
+			break
 		except googleapiclient.errors.HttpError:
-			pass
+			time.sleep(2)
 	return mail
 
 def getemail(service,messageid):
@@ -27,9 +28,9 @@ def getemail(service,messageid):
 	for i in range(0,3):
 		try:
 			email = service.users().messages().get(userId='me', id=messageid).execute()
-			i = 4
+			break
 		except googleapiclient.errors.HttpError:
-			pass
+			time.sleep(2)
 	return email
 
 def deleteemail(service, messageid):
@@ -42,9 +43,9 @@ def deleteemail(service, messageid):
 	for i in range(0,3):
 		try:
 			service.users().messages().delete(userId='me', id=messageid).execute()
-			i = 4
+			break
 		except googleapiclient.errors.HttpError:
-			pass
+			time.sleep(2)
 
 def markasread(service, messageid):
 	'''
@@ -56,6 +57,6 @@ def markasread(service, messageid):
 	for i in range(0,3):
 		try:
 			service.users().messages().modify(userId='me', id=messageid,body={'removeLabelIds': ['UNREAD']}).execute()
-			i = 4
+			break
 		except googleapiclient.errors.HttpError:
-			pass
+			time.sleep(2)

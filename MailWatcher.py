@@ -27,7 +27,7 @@ if (os.path.isfile('data.xml')):
 			os.chdir(serverdir)
 			os.system(servercommand)
 			os.chdir(origpath)
-			gStartBackend.markcorrectpassemail(allowed_senders, serverpass)
+			gStartBackend.deletecorrectpassemail(allowed_senders, serverpass)
 		# Insures that any email with the password that was sent with the password is not going to retrigger the server immediatly
 		time.sleep(30)
 else:

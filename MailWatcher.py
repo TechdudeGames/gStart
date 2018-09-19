@@ -103,8 +103,8 @@ if (os.path.isfile('data.xml')):
 					pass
 				stopidle.value = 0
 			time.sleep(mailcheckdelay)
-		couter += 1
-		if counter == itterationsperclear:
-			os.system("clear")
+			couter += 1
+			if counter == itterationsperclear:
+				os.system("clear")
 else:
 	print("Yo dawg you need to data.xml")

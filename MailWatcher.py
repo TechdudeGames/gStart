@@ -42,7 +42,7 @@ if arguments != []:
 			timearg = arguments.index("-t")
 			try:
 				timearg_perm = arguments[timearg+1]
-				mailcheckdelay = float(ipcfarg_perm)
+				mailcheckdelay = float(timearg_perm)
 			except IndexError:
 				print("Invalid perameter")
 				continuetorun = False

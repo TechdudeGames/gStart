@@ -9,6 +9,7 @@ continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 20
 sendfeedbackemails = False
+mailcheckdelay = 30
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")
@@ -17,6 +18,7 @@ if arguments != []:
 		helparg = arguments.index("-h")
 		print(""
 		      "-c | Number of iterations before I clear the screen\n"
+		      "-t | Times between mail checks"
 		      "-h | prints this help thing :)\n"
 		      "-s | Send email feedback if the pass is right or if the server is already running"
 		      "-r | random crap ;)\n")
@@ -35,6 +37,22 @@ if arguments != []:
 				continuetorun = False
 		except ValueError:
 			pass
+		
+		try:
+			timearg = arguments.index("-t")
+			try:
+				timearg_perm = arguments[timearg+1]
+				mailcheckdelay = float(ipcfarg_perm)
+			except IndexError:
+				print("Invalid perameter")
+				continuetorun = False
+			except IndexError:
+				print("Invalid perameter")
+				continuetorun = False
+		except ValueError:
+			pass
+		
+		
 	try:
 		if "-r" in arguments:
 			print("A skunk sat on a stump\n"
@@ -84,7 +102,7 @@ if (os.path.isfile('data.xml')):
 				while idle_proc.is_alive():
 					pass
 				stopidle.value = 0
-		time.sleep(30)
+		time.sleep(mailcheckdelay)
 		couter += 1
 		if counter == itterationsperclear:
 			os.system("clear")

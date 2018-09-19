@@ -1,2 +1,2 @@
-#!/bin/bash
-printf "Helllooooo\n"
+#!/usr/bin/python3
+printf "Hello"

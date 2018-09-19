@@ -20,7 +20,7 @@ if arguments != []:
 		      "-c | Number of iterations before I clear the screen\n"
 		      "-t | Times between mail checks\n"
 		      "-h | prints this help thing :)\n"
-		      "-s | Send email feedback if the pass is right or if the server is already running"
+		      "-s | Send email feedback if the pass is right or if the server is already running\n"
 		      "-r | random crap ;)\n")
 		continuetorun = False
 	except ValueError:

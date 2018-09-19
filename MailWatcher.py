@@ -98,11 +98,11 @@ if (os.path.isfile('data.xml')):
 				os.chdir(serverdir)
 				os.system(servercommand)
 				os.chdir(origpath)
-				gStartBackend.deletecorrectpassemail(allowed_senders, serverpass)
 				stopidle.value = 0
 				while idle_proc.is_alive():
 					pass
 				stopidle.value = 0
+				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False) #Deletes correct password emails queitly
 			time.sleep(mailcheckdelay)
 			counter += 1
 			if counter == itterationsperclear:

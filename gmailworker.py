@@ -1,5 +1,8 @@
 import googleapiclient.errors
 import time
+import mimetypes
+from email.mime.text import MIMEText
+import base64
 def getmail(service, labels=["INBOX", "UNREAD"]):
 	'''
 	:param service: The gmail service variable used to access the gmail account
@@ -60,3 +63,39 @@ def markasread(service, messageid):
 			break
 		except googleapiclient.errors.HttpError:
 			time.sleep(2)
+			
+def createmessage(sender,to,subject,bodytext):
+	'''
+	:param sender:  Who is we
+	:param to: Who we sending this carp to
+	:param subject: What be thynn subject
+	:param bodytext: What might thynn text be?
+	:return: Thynn message var
+	'''
+	message = MIMEText(bodytext)
+	message['to'] = to
+	message['from'] = sender
+	message['subject'] = subject
+	return {'raw': base64.urlsafe_b64decode(message.as_bytes())}
+
+def sendmessage(service, message):
+	for i in range(0,3):
+		try:
+			service.users().messages().send(userID='me', body=message).execute()
+			break
+		except googleapiclient.errors.HttpError:
+			print("Opsi woopsi")
+			time.sleep(2)
+def getemailfromstring(emailusertext):
+	'''
+	:param emailusertext: The gmail email string needing to be processed
+	:return: The raw email address
+	'''
+	emaillist = list(emailusertext)
+	try:
+		firstlsign = emaillist.index("<")+1
+		lastlsign = emaillist.__len__()-1
+		return ''.join(emaillist[firstlsign:lastlsign])
+	except ValueError:
+		return emailusertext
+		

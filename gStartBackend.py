@@ -12,7 +12,7 @@ if not creds or creds.invalid:
 service = build('gmail', 'v1', http=creds.authorize(Http()))
 
 
-def checkmail(valid_senders, password):
+def checkmail(valid_senders, password, sendconfirmemail=False):
 	checkfortext = False
 	startserver = False
 	unreademail = gmailworker.getmail(service)

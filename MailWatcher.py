@@ -4,9 +4,11 @@ import xml.etree.cElementTree as elementtree
 import os
 import sys
 import time
+import multiprocessing
 continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 20
+sendfeedbackemails = False
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")
@@ -16,6 +18,7 @@ if arguments != []:
 		print(""
 		      "-c | Number of iterations before I clear the screen\n"
 		      "-h | prints this help thing :)\n"
+		      "-s | Send email feedback if the pass is right or if the server is already running"
 		      "-r | random crap ;)\n")
 		continuetorun = False
 	except ValueError:
@@ -23,11 +26,13 @@ if arguments != []:
 			ipcfarg = arguments.index("-c")
 			try:
 				ipcfarg_perm = arguments[ipcfarg+1]
-				itterationsperclear = int(ipcfarg_perm)
+				itterationsperclear = float(ipcfarg_perm)
 			except IndexError:
 				print("Invalid perameter")
+				continuetorun = False
 			except IndexError:
 				print("Invalid perameter")
+				continuetorun = False
 		except ValueError:
 			pass
 	try:
@@ -40,6 +45,12 @@ if arguments != []:
 			continuetorun = False
 	except ValueError:
 		pass
+	
+stopidle =  multiprocessing.Value('i', 0)
+def idlingemailsender(stopvar):
+	while stopvar.value == 1:
+		pass
+idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
 if (os.path.isfile('data.xml')):
 	if continuetorun:
 		authfile = elementtree.ElementTree(file="data.xml")
@@ -62,11 +73,15 @@ if (os.path.isfile('data.xml')):
 		while True:
 			needtostart = gStartBackend.checkmail(allowed_senders, serverpass)
 			if needtostart:
+				stopidle.value = 1
+				idle_proc.start()
 				os.chdir(serverdir)
 				os.system(servercommand)
 				os.chdir(origpath)
 				gStartBackend.deletecorrectpassemail(allowed_senders, serverpass)
-			# Insures that any email with the password that was sent with the password is not going to retrigger the server immediatly
-			time.sleep(30)
+				stopidle.value = 0
+				while idle_proc.is_alive():
+					pass
+				stopidle.value = 0
 else:
 	print("Yo dawg you need to data.xml")

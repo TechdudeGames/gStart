@@ -18,7 +18,7 @@ if arguments != []:
 		helparg = arguments.index("-h")
 		print(""
 		      "-c | Number of iterations before I clear the screen\n"
-		      "-t | Times between mail checks"
+		      "-t | Times between mail checks\n"
 		      "-h | prints this help thing :)\n"
 		      "-s | Send email feedback if the pass is right or if the server is already running"
 		      "-r | random crap ;)\n")
@@ -68,6 +68,7 @@ stopidle =  multiprocessing.Value('i', 0)
 def idlingemailsender(stopvar):
 	while stopvar.value == 1:
 		pass
+		time.sleep(120)
 idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
 counter = 0
 if (os.path.isfile('data.xml')):
@@ -106,5 +107,6 @@ if (os.path.isfile('data.xml')):
 			counter += 1
 			if counter == itterationsperclear:
 				os.system("clear")
+				counter = 0
 else:
 	print("Yo dawg you need to data.xml")

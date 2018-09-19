@@ -84,7 +84,7 @@ if (os.path.isfile('data.xml')):
 				while idle_proc.is_alive():
 					pass
 				stopidle.value = 0
-		time.sleep(continuetorun)
+		time.sleep(30)
 		couter += 1
 		if counter == itterationsperclear:
 			os.system("clear")

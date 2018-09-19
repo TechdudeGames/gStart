@@ -51,6 +51,7 @@ def idlingemailsender(stopvar):
 	while stopvar.value == 1:
 		pass
 idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
+counter = 0
 if (os.path.isfile('data.xml')):
 	if continuetorun:
 		authfile = elementtree.ElementTree(file="data.xml")
@@ -83,5 +84,9 @@ if (os.path.isfile('data.xml')):
 				while idle_proc.is_alive():
 					pass
 				stopidle.value = 0
+		time.sleep(continuetorun)
+		couter += 1
+		if counter == itterationsperclear:
+			os.system("clear")
 else:
 	print("Yo dawg you need to data.xml")

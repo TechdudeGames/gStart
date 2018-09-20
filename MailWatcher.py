@@ -7,9 +7,9 @@ import time
 import multiprocessing
 continuetorun = True
 arguments = sys.argv[1:]
-itterationsperclear = 20
+itterationsperclear = 2880
 sendfeedbackemails = False
-mailcheckdelay = 1
+mailcheckdelay = 30
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")

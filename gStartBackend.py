@@ -17,10 +17,10 @@ def checkmail(valid_senders, password, sendconfirmemail=False,verbose=True):
 	unreademail = gmailworker.getmail(service)
 	lookatmail = False
 	if unreademail == None:
-		if verbose:(time.strftime("%c"), " Unable to get the accounts email.")
+		if verbose:print(time.strftime("%c"), " Unable to get the accounts email.")
 		return False
 	elif unreademail['resultSizeEstimate'] == 0:
-		if verbose:(time.strftime("%c"), " No new mail to look at.")
+		if verbose:print(time.strftime("%c"), " No new mail to look at.")
 		return False
 	else:
 		mailtolookat = unreademail['messages']
@@ -34,23 +34,25 @@ def checkmail(valid_senders, password, sendconfirmemail=False,verbose=True):
 				metadata = current_email['payload']['headers']
 				for parse in metadata:
 					if parse['name'] == 'From':
-						if verbose:(time.strftime("%c"), " Got an email from:", parse['value'])
+						if verbose:print(time.strftime("%c"), " Got an email from:", parse['value'])
 						for issender in valid_senders:
 							if issender == parse['value']:
-								current_sender = parse['value']
-								if verbose:(time.strftime("%c"),
+								current_sender = gmailworker.getemailfromstring(parse['value'])
+								if verbose:print(time.strftime("%c"),
 								      " Looks like someone I know, let's check the body of the email")
 								checkfortext = True
 								break
 				if checkfortext:
 					msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 					if msg == password:
-						if verbose:(time.strftime("%c"), " Password correct! Starting up")
-						#gmailworker.createmessage("gStartBackend <>")
+						if verbose:print(time.strftime("%c"), " Password correct! Starting up")
+						msgstr = "The server has been started at: " + time.strftime("%c")
+						msg = gmailworker.createmessage("",current_sender,"Server has been started!",msgstr)
+						gmailworker.sendmessage(service, msg)
 						gmailworker.deleteemail(service, selectedmail['id'])
 						startserver = True
 					else:
-						if verbose:(time.strftime("%c"), " Password was incorrect.")
+						if verbose:print(time.strftime("%c"), " Password was incorrect.")
 						gmailworker.markasread(service, selectedmail['id'])
 				else:
 					gmailworker.markasread(service, selectedmail['id'])

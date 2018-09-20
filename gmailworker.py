@@ -2,6 +2,7 @@ import googleapiclient.errors
 import time
 import mimetypes
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import base64
 def getmail(service, labels=["INBOX", "UNREAD"]):
 	'''
@@ -72,16 +73,19 @@ def createmessage(sender,to,subject,bodytext):
 	:param bodytext: What might thynn text be?
 	:return: Thynn message var
 	'''
-	message = MIMEText(bodytext)
-	message['to'] = to
-	message['from'] = sender
-	message['subject'] = subject
-	return {'raw': base64.urlsafe_b64decode(message.as_bytes())}
+	message = MIMEMultipart('alternative')
+	message['To'] = to
+	message['From'] = sender
+	message['Subject'] = subject
+	message.attach(MIMEText(bodytext, 'plain'))
+	tmpmsg = base64.urlsafe_b64encode(message.as_bytes())
+	raw = tmpmsg.decode()
+	return {'raw': raw}
 
 def sendmessage(service, message):
 	for i in range(0,3):
 		try:
-			service.users().messages().send(userID='me', body=message).execute()
+			service.users().messages().send(userId='me', body=message).execute()
 			break
 		except googleapiclient.errors.HttpError:
 			print("Opsi woopsi")

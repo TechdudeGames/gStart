@@ -1,6 +1,8 @@
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from json import loads
+import requests
 import gmailworker
 import time
 SCOPES = 'https://mail.google.com/'
@@ -11,7 +13,7 @@ if not creds or creds.invalid:
 	creds = tools.run_flow(flow, store)
 service = build('gmail', 'v1', http=creds.authorize(Http()))
 
-def checkmail(valid_senders, password, sendconfirmemail=False,verbose=True):
+def checkmail(valid_senders, password, sendfeedbackemail=False,verbose=True,idlemode = False):
 	checkfortext = False
 	startserver = False
 	unreademail = gmailworker.getmail(service)
@@ -46,9 +48,14 @@ def checkmail(valid_senders, password, sendconfirmemail=False,verbose=True):
 					msg = current_email['snippet']  # We only need to get the first portion, so the snippet will due.
 					if msg == password:
 						if verbose:print(time.strftime("%c"), " Password correct! Starting up")
-						msgstr = "The server has been started at: " + time.strftime("%c")
-						msg = gmailworker.createmessage("",current_sender,"Server has been started!",msgstr)
-						gmailworker.sendmessage(service, msg)
+						if sendfeedbackemail == True:
+							if idlemode:
+								msgstr = "The server is already on silly :)" + "\n The current server ip is: " + str(requests.get('http://ip.42.pl/raw').text)
+								msg = gmailworker.createmessage("", current_sender, "Server is already online", msgstr)
+							else:
+								msgstr = "The server has been started at: " + time.strftime("%c") + "\n The current server ip is: " + str(requests.get('http://ip.42.pl/raw').text)
+								msg = gmailworker.createmessage("", current_sender, "Server has been started!", msgstr)
+							gmailworker.sendmessage(service, msg)
 						gmailworker.deleteemail(service, selectedmail['id'])
 						startserver = True
 					else:

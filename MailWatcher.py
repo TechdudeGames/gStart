@@ -8,19 +8,18 @@ import multiprocessing
 continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 2880
-sendfeedbackemails = False
+sendfb = True
 mailcheckdelay = 30
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")
 if arguments != []:
 	if "-h" in arguments:
-		helparg = arguments.index("-h")
 		print(""
+		      "-h | prints this help thing :)\n"
 		      "-c | Number of iterations before I clear the screen\n"
 		      "-t | Times between mail checks\n"
-		      "-h | prints this help thing :)\n"
-		      "-s | Send email feedback if the pass is right or if the server is already running\n"
+		      "-s | Send email feedback if the pass is right or if the server is already running. Default is 1 (On) and 0 is Off\n"
 		      "-r | random crap ;)\n")
 		continuetorun = False
 	else:
@@ -32,11 +31,8 @@ if arguments != []:
 			except IndexError:
 				print("Invalid perameter")
 				continuetorun = False
-			except IndexError:
-				print("Invalid perameter")
-				continuetorun = False
 	
-		if "-f in arguments":
+		if "-f" in arguments:
 			timearg = arguments.index("-t")
 			try:
 				timearg_perm = arguments[timearg+1]
@@ -44,25 +40,27 @@ if arguments != []:
 			except IndexError:
 				print("Invalid perameter")
 				continuetorun = False
-			except IndexError:
-				print("Invalid perameter")
-				continuetorun = False
-		
-		
-	if "-r" in arguments:
+	
+		if "-s" in arguments:
+			sendarg= arguments.index("-s")
+			sendarg_perm = arguments[sendarg+1]
+			if sendarg_perm == 0:
+				sendfb = False
+	
 		if "-r" in arguments:
-			print("A skunk sat on a stump\n"
-			      "The stump thunk\n"
-			      "The skunk thump\n"
-			      "The stump thunk the skunk stunk\n"
-			      "The skunk thunk the stump stunk\n")
-			continuetorun = False
+				print("A skunk sat on a stump\n"
+			          "The stump thunk\n"
+			          "The skunk thump\n"
+			          "The stump thunk the skunk stunk\n"
+			          "The skunk thunk the stump stunk\n")
+				continuetorun = False
+			
 	
 stopidle =  multiprocessing.Value('i', 0)
 def idlingemailsender(stopvar):
 	while stopvar.value == 1:
-		pass
-		time.sleep(120)
+		gStartBackend.checkmail(allowed_senders,serverpass,verbose=False,idlemode=True)
+		time.sleep(60)
 idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
 counter = 0
 if (os.path.isfile('data.xml')):
@@ -96,11 +94,11 @@ if (os.path.isfile('data.xml')):
 				while idle_proc.is_alive():
 					pass
 				stopidle.value = 0
-				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False) #Deletes correct password emails queitly
+				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False,sendfeedbackemails=sendfb) #Deletes correct password emails queitly
 			time.sleep(mailcheckdelay)
 			counter += 1
 			if counter == itterationsperclear:
 				os.system("clear")
 				counter = 0
 else:
-	print("Yo dawg you need to data.xml")
+	print("Yo dawg you need the data.xml")

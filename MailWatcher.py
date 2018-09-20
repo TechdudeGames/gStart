@@ -10,6 +10,7 @@ arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
 mailcheckdelay = 30
+serverport = None
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")
@@ -59,7 +60,7 @@ if arguments != []:
 stopidle =  multiprocessing.Value('i', 0)
 def idlingemailsender(stopvar):
 	while stopvar.value == 1:
-		gStartBackend.checkmail(allowed_senders,serverpass,verbose=True,idlemode=True,sendfeedbackemail=True)
+		gStartBackend.checkmail(allowed_senders,serverpass,verbose=True,idlemode=True,sendfeedbackemail=True, serverport=serverport)
 		time.sleep(60)
 idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
 counter = 0
@@ -81,9 +82,11 @@ if (os.path.isfile('data.xml')):
 				servercommand = tag.text
 			if tag.tag == "allowed_email":
 				allowed_senders.append(tag.text)
+			if tag.tag == "port":
+				serverport = tag.text
 		origpath = os.getcwd()
 		while True:
-			needtostart = gStartBackend.checkmail(allowed_senders, serverpass,sendfeedbackemail=sendfb)
+			needtostart = gStartBackend.checkmail(allowed_senders, serverpass,sendfeedbackemail=sendfb,serverport=serverport)
 			if needtostart:
 				stopidle.value = 0
 				while idle_proc.is_alive():

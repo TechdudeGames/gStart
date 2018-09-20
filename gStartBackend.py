@@ -1,7 +1,6 @@
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-from json import loads
 import requests
 import gmailworker
 import time

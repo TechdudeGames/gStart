@@ -9,12 +9,12 @@ continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 20
 sendfeedbackemails = False
-mailcheckdelay = 30
+mailcheckdelay = 1
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.1\n")
 if arguments != []:
-	try:
+	if "-h" in arguments:
 		helparg = arguments.index("-h")
 		print(""
 		      "-c | Number of iterations before I clear the screen\n"
@@ -23,8 +23,8 @@ if arguments != []:
 		      "-s | Send email feedback if the pass is right or if the server is already running\n"
 		      "-r | random crap ;)\n")
 		continuetorun = False
-	except ValueError:
-		try:
+	else:
+		if "-c" in arguments:
 			ipcfarg = arguments.index("-c")
 			try:
 				ipcfarg_perm = arguments[ipcfarg+1]
@@ -35,10 +35,8 @@ if arguments != []:
 			except IndexError:
 				print("Invalid perameter")
 				continuetorun = False
-		except ValueError:
-			pass
-		
-		try:
+	
+		if "-f in arguments":
 			timearg = arguments.index("-t")
 			try:
 				timearg_perm = arguments[timearg+1]
@@ -49,11 +47,9 @@ if arguments != []:
 			except IndexError:
 				print("Invalid perameter")
 				continuetorun = False
-		except ValueError:
-			pass
 		
 		
-	try:
+	if "-r" in arguments:
 		if "-r" in arguments:
 			print("A skunk sat on a stump\n"
 			      "The stump thunk\n"
@@ -61,8 +57,6 @@ if arguments != []:
 			      "The stump thunk the skunk stunk\n"
 			      "The skunk thunk the stump stunk\n")
 			continuetorun = False
-	except ValueError:
-		pass
 	
 stopidle =  multiprocessing.Value('i', 0)
 def idlingemailsender(stopvar):

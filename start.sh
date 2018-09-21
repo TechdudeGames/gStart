@@ -1,2 +1,3 @@
-#!/bin/bash
-printf "Hello"
+#!/usr/bin/python3
+import time
+time.sleep(360)

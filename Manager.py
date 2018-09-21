@@ -13,6 +13,7 @@ if (os.path.isfile('data.xml')):
 	serverpass = None
 	servercommand = None
 	serverdir = None
+	serverport = None
 	for tag in dataroot:
 		if tag.tag == "serverdirectory":
 			serverdir = tag.text
@@ -22,6 +23,8 @@ if (os.path.isfile('data.xml')):
 			servercommand = tag.text
 		if tag.tag == "allowed_email":
 			allowed_senders.append(tag.text)
+		if tag.tag == "port":
+			serverport = tag.text
 	
 	currentdir = os.getcwd()
 	
@@ -35,9 +38,11 @@ if (os.path.isfile('data.xml')):
 			self.mainwindow = builder.get_object('GUI', master)
 			builder.get_variable("serverpass").set(serverpass)
 			builder.get_variable("fullcmd").set(serverdir+servercommand)
+			builder.get_variable("currentport").set(serverport)
 			callbacks = {
 				"changepass": None,
-				"changecmd" : None
+				"changecmd" : None,
+				"changeport" : None
 			}
 			builder.connect_callbacks(self)
 			builder.connect_callbacks(callbacks)
@@ -47,7 +52,21 @@ if (os.path.isfile('data.xml')):
 			serverpass_elm = serverpass_parse.findall("serverpass")[0]
 			serverpass_elm.text = self.builder.get_variable("newpass").get()
 			serverpass_parse.write("data.xml")
-			self.builder.get_variable("fullcmd").set(serverdir+servercommand)
+			self.builder.get_variable("serverpass").set(self.builder.get_variable("newpass").get())
+		
+		def changeport(self):
+			serverport_parse = elementtree.parse("data.xml")
+			if serverport_parse.findall("port").__len__() != 0:
+				if type(self.builder.get_variable("newport").get()) == type(int):
+					serverport_elm = serverport_parse.findall("port")[0]
+					serverport_elm.text = self.builder.get_variable("newport").get()
+					serverport_parse.write("data.xml")
+					self.builder.get_variable("currentport").set(self.builder.get_variable("newport").get())
+				elif type(self.builder.get_variable("newport").get()) == type(str):
+					snarkyremark = "Last time I checked " + self.builder.get_variable("newport").get() + "is not a valid port"
+					messagebox.showerror(title="Error", message=snarkyremark)
+			else:
+				messagebox.showerror(title="Error",message="The data.xml file does not contain the port tag")
 		
 		def changecmd(self):
 			fullcmd = self.builder.get_variable("newcmd").get()

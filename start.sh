@@ -1,3 +1,2 @@
-#!/usr/bin/python3
-while True:
-    print("Carp")
+#!/bin/bash
+printf "Hello"

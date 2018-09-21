@@ -9,7 +9,7 @@ continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
-mailcheckdelay = 1
+mailcheckdelay = 30
 serverport = None
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"

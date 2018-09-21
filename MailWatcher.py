@@ -57,12 +57,12 @@ if arguments != []:
 				continuetorun = False
 			
 	
-stopidle =  multiprocessing.Value('i', 0)
-def idlingemailsender(stopvar):
-	while stopvar.value == 1:
-		gStartBackend.checkmail(allowed_senders,serverpass,verbose=True,idlemode=True,sendfeedbackemail=True, serverport=serverport)
-		time.sleep(60)
-idle_proc = multiprocessing.Process(target=idlingemailsender, args=[stopidle])
+
+def idler():
+	os.chdir(serverdir)
+	os.system(servercommand)
+	os.chdir(origpath)
+idle_proc = multiprocessing.Process(target=idler)
 counter = 0
 if (os.path.isfile('data.xml')):
 	if continuetorun:
@@ -88,16 +88,11 @@ if (os.path.isfile('data.xml')):
 		while True:
 			needtostart = gStartBackend.checkmail(allowed_senders, serverpass,sendfeedbackemail=sendfb,serverport=serverport)
 			if needtostart:
-				stopidle.value = 0
-				while idle_proc.is_alive():
-					pass
-				stopidle.value = 1
 				idle_proc.start()
-				os.chdir(serverdir)
-				os.system(servercommand)
-				os.chdir(origpath)
-				stopidle.value = 0
-				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False,sendfeedbackemail=sendfb) #Deletes correct password emails queitly
+				while idle_proc.is_alive():
+					gStartBackend.checkmail(allowed_senders, serverpass, verbose=False, sendfeedbackemail=sendfb,idlemode=True,serverport=serverport)
+					time.sleep(mailcheckdelay)
+				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False,sendfeedbackemail=sendfb,serverport=serverport) #Deletes correct password emails queitly
 			time.sleep(mailcheckdelay)
 			counter += 1
 			if counter == itterationsperclear:

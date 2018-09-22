@@ -67,7 +67,7 @@ class managergui:
 			serverpass_elm = serverpass_parse.findall("pass")[0]
 			serverpass_elm.text = newpass
 			serverpass_parse.write("data.xml")
-			self.builder.get_variable("newpass").set(newpass)
+			self.builder.get_variable("serverpass").set(newpass)
 		else:
 			messagebox.showerror(title="Error", message="I am not about to let you have a null password.")
 	

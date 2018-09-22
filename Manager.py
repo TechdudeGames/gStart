@@ -64,10 +64,10 @@ class managergui:
 		newpass = self.builder.get_variable("newpass").get()
 		if newpass.__len__() > 0:
 			serverpass_parse = ET.parse("data.xml")
-			serverpass_elm = serverpass_parse.findall("serverpass")[0]
+			serverpass_elm = serverpass_parse.findall("pass")[0]
 			serverpass_elm.text = newpass
 			serverpass_parse.write("data.xml")
-			self.builder.get_variable("serverpass").set(newpass)
+			self.builder.get_variable("pass").set(newpass)
 		else:
 			messagebox.showerror(title="Error", message="I am not about to let you have a null password.")
 	
@@ -120,12 +120,12 @@ class managergui:
 			onlypath.reverse()
 			path = ''.join(onlypath)
 			serverdir_parse = ET.parse("data.xml")
-			serverdir_elm = serverdir_parse.findall("serverdirectory")[0]
+			serverdir_elm = serverdir_parse.findall("directory")[0]
 			serverdir_elm.text = path
 			serverdir_parse.write("data.xml")
 			#
 			servercmd_parse = ET.parse("data.xml")
-			servercmd_elm = servercmd_parse.findall("servercommand")[0]
+			servercmd_elm = servercmd_parse.findall("command")[0]
 			servercmd_elm.text = cmd
 			servercmd_parse.write("data.xml")
 			self.builder.get_variable("fullcmd").set(path + cmd)

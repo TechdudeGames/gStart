@@ -74,11 +74,11 @@ if (os.path.isfile('data.xml')):
 		servercommand = None
 		serverdir = None
 		for tag in authroot:
-			if tag.tag == "serverdirectory":
+			if tag.tag == "directory":
 				serverdir = tag.text
-			if tag.tag == "serverpass":
+			if tag.tag == "pass":
 				serverpass = tag.text
-			if tag.tag == "servercommand":
+			if tag.tag == "command":
 				servercommand = tag.text
 			if tag.tag == "allowed_email":
 				allowed_senders.append(tag.text)

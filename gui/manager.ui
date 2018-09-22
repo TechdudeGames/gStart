@@ -66,6 +66,7 @@
         <property name="font">{Ubuntu} 12 {}</property>
         <property name="insertontime">0</property>
         <property name="textvariable">string:newpass</property>
+        <bind add="" handler="callback" sequence="&lt;1&gt;" />
         <layout>
           <property name="column">0</property>
           <property name="propagate">True</property>
@@ -214,5 +215,14 @@
         </layout>
       </object>
     </child>
+  </object>
+  <object class="tk.Frame" id="EmailManagement">
+    <property name="height">200</property>
+    <property name="width">200</property>
+    <layout>
+      <property name="column">0</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+    </layout>
   </object>
 </interface>

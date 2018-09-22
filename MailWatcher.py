@@ -13,7 +13,7 @@ mailcheckdelay = 30
 serverport = None
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
-      "Version 1.1\n")
+      "Version 1.5\n")
 if arguments != []:
 	if "-h" in arguments:
 		print(""
@@ -99,4 +99,4 @@ if (os.path.isfile('data.xml')):
 				os.system("clear")
 				counter = 0
 else:
-	print("Yo dawg you need the data.xml")
+	print("Yo dawg you need the data.xml. Please use Manager to create one.")

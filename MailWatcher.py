@@ -88,6 +88,8 @@ if (os.path.isfile('data.xml')):
 		while True:
 			needtostart = gStartBackend.checkmail(allowed_senders, serverpass,sendfeedbackemail=sendfb,serverport=serverport)
 			if needtostart:
+				while idle_proc.is_alive():
+					pass
 				idle_proc.start()
 				while idle_proc.is_alive():
 					gStartBackend.checkmail(allowed_senders, serverpass, verbose=False, sendfeedbackemail=sendfb,idlemode=True,serverport=serverport)

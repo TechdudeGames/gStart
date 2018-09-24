@@ -9,7 +9,7 @@ continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
-mailcheckdelay = 30
+mailcheckdelay = 1
 serverport = None
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
@@ -86,15 +86,33 @@ if (os.path.isfile('data.xml')):
 				serverport = tag.text
 		origpath = os.getcwd()
 		while True:
-			needtostart = gStartBackend.checkmail(allowed_senders, serverpass,sendfeedbackemail=sendfb,serverport=serverport)
-			if needtostart:
-				while idle_proc.is_alive():
-					pass
-				idle_proc.start()
-				while idle_proc.is_alive():
-					gStartBackend.checkmail(allowed_senders, serverpass, verbose=False, sendfeedbackemail=sendfb,idlemode=True,serverport=serverport)
-					time.sleep(mailcheckdelay)
-				gStartBackend.checkmail(allowed_senders, serverpass,verbose=False,sendfeedbackemail=sendfb,serverport=serverport) #Deletes correct password emails queitly
+			gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,valid_passwords=list((serverpass, "DirtTech1")),verbose=True)
+			if gmailresult['passes'].__len__() >0:
+				firstpass = gmailresult['passes'][0]
+				singlepass = True
+				for checkingpass in gmailresult['passes'][0:]:
+					if firstpass != checkingpass:
+						singlepass = False
+				if singlepass:
+					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'],servername="Hahlol", port_number=serverport)
+					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+					while idle_proc.is_alive():
+						pass
+					idle_proc.start()
+					while idle_proc.is_alive():
+						gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
+						                                     valid_passwords=list((serverpass, "DirtTech1")),
+						                                     verbose=True)
+						gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverport)
+						time.sleep(mailcheckdelay)
+						
+					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
+					                                     valid_passwords=list(serverpass, "DirtTech1"), verbose=True)
+					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+				else:
+					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+					gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
 			time.sleep(mailcheckdelay)
 			counter += 1
 			if counter == itterationsperclear:

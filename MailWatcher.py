@@ -10,7 +10,7 @@ arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
 mailcheckdelay = 1
-serverport = None
+stoppass = "ST0P"
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.5\n")
@@ -72,58 +72,67 @@ if (os.path.isfile('data.xml')):
 		authroot = authfile.getroot()
 		# Getting the password and availible senders
 		allowed_senders = []
-		serverpass = None
+		serverpass = []
 		servercommand = None
 		serverdir = None
+		serverport = None
 		for tag in authroot:
 			if tag.tag == "directory":
 				serverdir = tag.text
 			if tag.tag == "pass":
-				serverpass = tag.text
+				serverpass.append(tag.text)
 			if tag.tag == "command":
 				servercommand = tag.text
 			if tag.tag == "allowed_email":
 				allowed_senders.append(tag.text)
 			if tag.tag == "port":
 				serverport = tag.text
+		serverpass.append(stoppass)
 		origpath = os.getcwd()
 		#Main loop of dis bad boi.
-		while True:
-			gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,valid_passwords=list((serverpass, "DirtTech1")),verbose=True)
+		keeponloopin = True
+		while keeponloopin:
+			gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,valid_passwords=stoppass,verbose=True)
 			#We shove the result of ^ into gmailresult
 			if gmailresult['passes'].__len__() >0:
-				'''
-				This next part is purly to prevent a freak issue from occuring if two people were to
-				simaltaniously send two emails with two different correct passwords.
-				'''
-				firstpass = gmailresult['passes'][0]
-				singlepass = True
-				for checkingpass in gmailresult['passes'][0:]:
-					if firstpass != checkingpass:
-						singlepass = False
+				if stoppass in gmailresult['passes']:
+					keeponloopin = False
+					print("Stopping now")
+				else:
+					'''
+					This next part is purly to prevent a freak issue from occuring if two people were to
+					simaltaniously send two emails with two different correct passwords.
+					'''
+					firstpass = gmailresult['passes'][0]
+					singlepass = True
+					for checkingpass in gmailresult['passes'][0:]:
+						if firstpass != checkingpass:
+							singlepass = False
+					
+					if singlepass:
+						# If we only have one password
+						gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername="Hahlol",
+						                                   port_number=serverport)
+						gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+						while idle_proc.is_alive():
+							pass
+						idle_proc.start()
+						while idle_proc.is_alive():
+							gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
+							                                     valid_passwords=list((serverpass, "DirtTech1")),
+							                                     verbose=True)
+							gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+							gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverport)
+							time.sleep(mailcheckdelay)
 						
-				if singlepass:
-					#If we only have one password
-					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'],servername="Hahlol", port_number=serverport)
-					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
-					while idle_proc.is_alive():
-						pass
-					idle_proc.start()
-					while idle_proc.is_alive():
 						gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
-						                                     valid_passwords=list((serverpass, "DirtTech1")),
+						                                     valid_passwords=list(serverpass, "DirtTech1"),
 						                                     verbose=True)
 						gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
-						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverport)
-						time.sleep(mailcheckdelay)
-						
-					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
-					                                     valid_passwords=list(serverpass, "DirtTech1"), verbose=True)
-					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
-				else:
-					#We send an email to everyone if we have the rare condition described above.
-					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
-					gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
+					else:
+						# We send an email to everyone if we have the rare condition described above.
+						gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
+						gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
 			time.sleep(mailcheckdelay)
 			counter += 1
 			if counter == itterationsperclear:

@@ -14,6 +14,7 @@ serverport = None
 print("===MailWatcher===\n"
       "TechdudeGames Inc.\n"
       "Version 1.5\n")
+#Command line arguments
 if arguments != []:
 	if "-h" in arguments:
 		print(""
@@ -57,7 +58,8 @@ if arguments != []:
 				continuetorun = False
 			
 	
-
+#This is the idler that starts the server. It is on a separate thread to allow us to check for correct emails while
+#This guy is waiting for the server to stop.
 def idler():
 	os.chdir(serverdir)
 	os.system(servercommand)
@@ -85,15 +87,23 @@ if (os.path.isfile('data.xml')):
 			if tag.tag == "port":
 				serverport = tag.text
 		origpath = os.getcwd()
+		#Main loop of dis bad boi.
 		while True:
 			gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,valid_passwords=list((serverpass, "DirtTech1")),verbose=True)
+			#We shove the result of ^ into gmailresult
 			if gmailresult['passes'].__len__() >0:
+				'''
+				This next part is purly to prevent a freak issue from occuring if two people were to
+				simaltaniously send two emails with two different correct passwords.
+				'''
 				firstpass = gmailresult['passes'][0]
 				singlepass = True
 				for checkingpass in gmailresult['passes'][0:]:
 					if firstpass != checkingpass:
 						singlepass = False
+						
 				if singlepass:
+					#If we only have one password
 					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'],servername="Hahlol", port_number=serverport)
 					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
 					while idle_proc.is_alive():
@@ -111,6 +121,7 @@ if (os.path.isfile('data.xml')):
 					                                     valid_passwords=list(serverpass, "DirtTech1"), verbose=True)
 					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
 				else:
+					#We send an email to everyone if we have the rare condition described above.
 					gStartBackend.deletevalidemails(idlist=gmailresult["ids"])
 					gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
 			time.sleep(mailcheckdelay)

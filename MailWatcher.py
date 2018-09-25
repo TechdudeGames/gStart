@@ -89,21 +89,39 @@ if continuetorun:
 				print('Your data.json file is malformed.')
 		
 		if validfile:
-			
 			# This portion checks to get the different servers
 			if 'servers' in serverdata:
 				for tmpserver in serverdata['servers']:
+					if 'server' in tmpserver:
+						servernames.append(tmpserver['server'])
+					else:
+						servernames.append(None)
+						
 					if 'password' in tmpserver:
-						serverpasses.append(str(tmpserver['password']))
+						serverpasses.append(tmpserver['password'])
 					else:
 						serverpasses.append(None)
+						
+					if 'directory' in tmpserver:
+						serverdirs.append(tmpserver['directory'])
+					else:
+						serverdirs.append(None)
 					
-					if 'server' in tmpserver:
-						servernames.append(str(tmpserver['server']))
+					if 'port' in tmpserver:
+						serverports.append(tmpserver['port'])
+					else:
+						serverports.append(None)
+					
 			
 			else:
 				print('You are missing the servers in the data.json. Please correct this.')
 				keeponloopin = False
+			
+			
+			
+			
+			
+			
 			
 			# This portion gets the valid emails
 			if 'allowed_emails' in serverdata:
@@ -140,19 +158,17 @@ if continuetorun:
 						singlepass = False
 				
 				if singlepass:
-					for investigated_server in servers:
-						if investigated_server['password'] == gmailresult['passes'][0]:
-							serverdir = investigated_server['directory']
-							servercmd = investigated_server['command']
-							serverport = investigated_server['port']
+					for investigated_server in range(0,servernames.__len__()-1):
+							if gmailresult['passes'][0] == serverpasses[investigated_server]:
+								servernumber = investigated_server
 					if idle_proc:
 						while idle_proc.is_alive():
 							pass
 					else:
-						idle_proc = multiprocessing.Process(target=idler, args=(serverdir, servercmd))
+						idle_proc = multiprocessing.Process(target=idler, args=(serverdirs[servernumber], servercmds[servernumber]))
 					# If we only have one password
-					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername='Hahlol',
-					                                   port_number=serverport)
+					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber],
+					                                   port_number=serverdirs[servernumber])
 					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
 					idle_proc.start()
 					while idle_proc.is_alive():
@@ -160,7 +176,7 @@ if continuetorun:
 						                                     valid_passwords=list((serverpasses, 'DirtTech1')),
 						                                     verbose=True)
 						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
-						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverport)
+						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverdirs[servernumber])
 						time.sleep(mailcheckdelay)
 					
 					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,

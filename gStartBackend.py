@@ -21,7 +21,7 @@ def getmails(valid_senders, valid_passwords=[], verbose=True):
 	'''
 	checkfortext = False
 	startserver = False
-	unreademail = gmailworker.getmail(service)
+	unreademail = gmailworker.getgmailemails(service)
 	lookatmail = False
 	return_dictionary = {"passes": [], "senders" : [], "ids": []}
 	if unreademail == None:
@@ -36,7 +36,7 @@ def getmails(valid_senders, valid_passwords=[], verbose=True):
 	if lookatmail:
 		for selectedmail in mailtolookat:
 			checkfortext = False
-			current_email = gmailworker.getemail(service, selectedmail['id'])
+			current_email = gmailworker.getemaildata(service, selectedmail['id'])
 			current_sender = None
 			if current_email != None:
 				metadata = current_email['payload']['headers']
@@ -45,7 +45,7 @@ def getmails(valid_senders, valid_passwords=[], verbose=True):
 						if verbose:print(time.strftime("%c"), " Got an email from:", parse['value'])
 						for issender in valid_senders:
 							if issender == parse['value']:
-								current_sender = gmailworker.getemailfromstring(parse['value'])
+								current_sender = gmailworker.getemailaddr(parse['value'])
 								if verbose:print(time.strftime("%c"),
 								      " Looks like someone I know, let's check the body of the email")
 								checkfortext = True

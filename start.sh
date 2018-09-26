@@ -1,3 +1,2 @@
-#!/usr/bin/python3
-import time
-time.sleep(360)
+#!/bin/bash
+printf "Server0 \n"

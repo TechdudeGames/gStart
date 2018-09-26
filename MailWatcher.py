@@ -10,7 +10,7 @@ continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
-mailcheckdelay = 1
+mailcheckdelay = 30
 stoppass = 'ST0P'
 origpath = os.getcwd()
 print('===MailWatcher===\n'
@@ -65,20 +65,21 @@ if arguments != []:
 def idler(dir, cmd):
 	os.chdir(dir)
 	os.system(cmd)
-	os.chdir(origpath)
 
 
 idle_proc = None
 counter = 0
 
 if continuetorun:
-	keeponloopin = True
+	#We are clear to run.
+	keeponloopin = True #We assume we are going to continue on with our life unless something comes up
 	servernames = []
 	serverpasses = []
 	serverdirs = []
 	servercmds = []
 	serverports = []
 	# data.json working crap
+	
 	if os.path.isfile('data.json'):
 		validfile = False
 		with open('data.json', 'r') as file:
@@ -86,12 +87,15 @@ if continuetorun:
 				serverdata = json.load(file)
 				validfile = True
 			except json.decoder.JSONDecodeError:
+				#This only occurs if the json file is broken.
 				print('Your data.json file is malformed.')
-		
+
 		if validfile:
 			# This portion checks to get the different servers
 			if 'servers' in serverdata:
+				#This insures that we have a servers portion of the program.
 				for tmpserver in serverdata['servers']:
+					#tmp server becomes the dictionary with all the needed data.
 					if 'server' in tmpserver:
 						servernames.append(tmpserver['server'])
 					else:
@@ -106,27 +110,27 @@ if continuetorun:
 						serverdirs.append(tmpserver['directory'])
 					else:
 						serverdirs.append(None)
+						
+					if 'command' in tmpserver:
+						servercmds.append(tmpserver['command'])
+					else:
+						servercmds.append(None)
 					
 					if 'port' in tmpserver:
 						serverports.append(tmpserver['port'])
 					else:
 						serverports.append(None)
-					
-			
 			else:
+				#This is for when there is no servers tag in the json file
 				print('You are missing the servers in the data.json. Please correct this.')
 				keeponloopin = False
-			
-			
-			
-			
-			
-			
-			
-			# This portion gets the valid emails
+
+			#This part gets the valid emails
 			if 'allowed_emails' in serverdata:
+				#Makes sure we have a list of valid emails
 				allowed_senders = serverdata['allowed_emails']
 			else:
+				#This is for when we don't have a email list
 				print('The json file is missing the allowed_emails array. Please add it to continue')
 				keeponloopin = False
 		
@@ -137,57 +141,72 @@ if continuetorun:
 		print('You appear to be missing data.json entirely.')
 		keeponloopin = False
 	
-	# Main loop of dis bad boi.
-	
+	serverpasses.append(stoppass)  # Append the stop password that way it is still in the list.
 	while keeponloopin:
-		gmailresult = gStartBackend.getmails(valid_senders=allowed_senders, valid_passwords=stoppass, verbose=True)
+		servernumber = 0
+		gmailresult = gStartBackend.getmails(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
 		# We shove the result of ^ into gmailresult
 		if gmailresult['passes'].__len__() > 0:
+
+			#Makes sure we actully have results
 			if stoppass in gmailresult['passes']:
 				keeponloopin = False
 				print('Stopping now')
+
 			else:
 				'''
 				This next part is purly to prevent a freak issue from occuring if two people were to
 				simaltaniously send two emails with two different correct passwords.
 				'''
-				firstpass = gmailresult['passes'][0]
+				firstpass = gmailresult['passes'][0] #We get the first password we got and compare it to the others
 				singlepass = True
 				for checkingpass in gmailresult['passes'][0:]:
 					if firstpass != checkingpass:
-						singlepass = False
+						singlepass = False #Somehow we have two emails with different passwords. :9
 				
 				if singlepass:
-					for investigated_server in range(0,servernames.__len__()-1):
+					#We only recieved one of a certain pass.
+					
+					for investigated_server in range(0,servernames.__len__()):
 							if gmailresult['passes'][0] == serverpasses[investigated_server]:
 								servernumber = investigated_server
+					#We find out which server we are going to be starting.
+					
+					#This portion is only to prevent us from double starting the idle_process
 					if idle_proc:
-						while idle_proc.is_alive():
-							pass
-					else:
-						idle_proc = multiprocessing.Process(target=idler, args=(serverdirs[servernumber], servercmds[servernumber]))
-					# If we only have one password
+						if idle_proc.is_alive():
+							idle_proc.join() #We join until it is done.
+					idle_proc = multiprocessing.Process(target=idler, args=(serverdirs[servernumber], servercmds[servernumber]))
+					#We pass idle_proc the things it needs in order to function properly
+
 					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber],
 					                                   port_number=serverdirs[servernumber])
 					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
+					
 					idle_proc.start()
 					while idle_proc.is_alive():
+						#This aims at only running while the idle_proc is working, but sometimes this can have issues.
+						
 						gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
 						                                     valid_passwords=list((serverpasses, 'DirtTech1')),
 						                                     verbose=True)
-						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
-						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverdirs[servernumber])
+						#We again check the mail while the server is running.
+						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
+						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
+						#We send them and idler state email
 						time.sleep(mailcheckdelay)
-					
+
 					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
-					                                     valid_passwords=list(serverpasses, 'DirtTech1'),
+					                                     valid_passwords=serverpasses,
 					                                     verbose=True)
+					# We again check the mail to remove any pesky immediate correct password emails
 					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
-					idle_proc = None
+					# We delete those emails
 				else:
 					# We send an email to everyone if we have the rare condition described above.
-					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
+					gStartBackend.deletevalidemails(idlist=gmailresult['ids']) #We delete the emails
 					gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
+					
 		time.sleep(mailcheckdelay)
 		counter += 1
 		if counter == itterationsperclear:

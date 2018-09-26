@@ -1,6 +1,5 @@
 import googleapiclient.errors
 import time
-import mimetypes
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import base64

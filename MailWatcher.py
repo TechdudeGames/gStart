@@ -175,12 +175,12 @@ if continuetorun:
 					#This portion is only to prevent us from double starting the idle_process
 					if idle_proc:
 						if idle_proc.is_alive():
-							idle_proc.join() #We join until it is done.
+							idle_proc.sjoin() #We join until it is done.
 					idle_proc = multiprocessing.Process(target=idler, args=(serverdirs[servernumber], servercmds[servernumber]))
 					#We pass idle_proc the things it needs in order to function properly
 
 					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber],
-					                                   port_number=serverdirs[servernumber])
+					                                   port_number=serverports[servernumber])
 					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
 					
 					idle_proc.start()
@@ -189,7 +189,7 @@ if continuetorun:
 						
 						gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
 						                                     valid_passwords=list((serverpasses, 'DirtTech1')),
-						                                     verbose=True)
+						                                     verbose=False)
 						#We again check the mail while the server is running.
 						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
 						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
@@ -198,7 +198,7 @@ if continuetorun:
 
 					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
 					                                     valid_passwords=serverpasses,
-					                                     verbose=True)
+					                                     verbose=False)
 					# We again check the mail to remove any pesky immediate correct password emails
 					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
 					# We delete those emails

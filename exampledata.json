@@ -1,0 +1,23 @@
+{
+  "servers": [
+    {
+      "server" : "Factions",
+      "password" : "Password",
+      "directory" : "/Server/ME",
+      "command" : "./start.sh",
+      "port" : 10001
+    },
+    {
+      "server" : "Skyblock",
+      "password" : "Oh look!",
+      "directory" : "/Server/YOU",
+      "command" : "./start.sh",
+      "port" : 10001
+    }
+  ],
+
+  "allowed_emails" : [
+    "TestEmail <testemail1@gmail.com>",
+    "TestEmail2 <testemail2@gmail.com>"
+  ]
+}

@@ -85,10 +85,11 @@ if continuetorun:
 			try:
 				serverdata = json.load(file)
 				validfile = True
+				file.close()
 			except json.decoder.JSONDecodeError:
 				#This only occurs if the json file is broken.
 				print('Your data.json file is malformed.')
-
+			
 		if validfile:
 			# This portion checks to get the different servers
 			if 'servers' in serverdata:

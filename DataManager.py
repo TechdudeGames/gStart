@@ -52,10 +52,21 @@ if os.path.isfile("data.json"):
 			print(mainmenu)
 			mainresponse = input("Choice>")
 			if mainresponse == "1":
-				print(servers_submenu)
-				subresponse = input("Choice>")
-				if subresponse == "1":
-					print("hahlol")
+				print("Unfinished, try again later")
+			elif mainresponse == "2":
+				addingemail = True
+				while addingemail:
+					print("Please send an email with the text ADDME to the email address MailWatcher uses.")
+					print("Press enter when you have done so.")
+					input()
+					gmaildata = gmailworker.getgmailemails(service)
+					if gmaildata == None:
+						print("We had an error getting the mail, retry?")
+						continueaddingemail = input("Y/N (We will assume Y if we get something else):")
+						if continueaddingemail == "N":
+							addingemail = False
+					elif gmaildata['resultSizeEstimate'] == 0:
+						print("We can't find any new emails in your inbox. Try sending it again.")
 			else:
 				print("Invalid choice.")
 	

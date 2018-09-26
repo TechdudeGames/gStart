@@ -3,7 +3,7 @@ import time
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import base64
-def getmail(service, labels=["INBOX", "UNREAD"]):
+def getgmailemails(service, labels=["INBOX", "UNREAD"]):
 	'''
 	:param service: The gmail service variable used to access the gmail account
 	:param lables: The labels I am looking for when getting the mail
@@ -20,7 +20,7 @@ def getmail(service, labels=["INBOX", "UNREAD"]):
 			time.sleep(2)
 	return mail
 
-def getemail(service,messageid):
+def getemaildata(service, messageid):
 	'''
 	:param service: The gmail service variable used to access the gmail account
 	:param messageid: The id of the email you want me to retrieve
@@ -89,7 +89,7 @@ def sendmessage(service, message):
 		except googleapiclient.errors.HttpError:
 			print("Opsi woopsi")
 			time.sleep(2)
-def getemailfromstring(emailusertext):
+def getemailaddr(emailusertext):
 	'''
 	:param emailusertext: The gmail email string needing to be processed
 	:return: The raw email address

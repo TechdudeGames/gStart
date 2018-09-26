@@ -12,7 +12,6 @@ itterationsperclear = 2880
 sendfb = True
 mailcheckdelay = 30
 stoppass = 'ST0P'
-origpath = os.getcwd()
 print('===MailWatcher===\n'
       'TechdudeGames Inc.\n'
       'Version 1.5\n')

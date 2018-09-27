@@ -22,12 +22,30 @@ print("Email Manager\n"
       "TechdudeGames Inc.")
 print("\nNote: I recommend that you have MailWatcher stopped while preforming these actions\n")
 
+def getmenunumber(minnumber,maxnumber,prompt_text = "Input:"):
+	keeptrying = True
+	attempted_input = ""
+	while keeptrying:
+		attempted_input = input(prompt_text)
+		print(attempted_input)
+		if attempted_input.isnumeric():
+			if float(attempted_input) % 1 == 0.0:
+				if (int(attempted_input) <= maxnumber) and (int(attempted_input) >= minnumber):
+					keeptrying = False
+				else:
+					print("Invalid input, try again.")
+			else:
+				print("Invalid input, try again.")
+		else:
+			print("Invalid input, try again.")
+	return int(attempted_input)
+
 mainmenu = '''
 \n
-		What would you like to do?
-		1) Manage Servers
-		2) Manage Emails
-		3) Quit
+What would you like to do?
+1) Manage Servers
+2) Manage Emails
+3) Quit
 		'''
 servers_submenu = '''
 \n
@@ -36,6 +54,12 @@ What would you like to do?
 2) Remove a preexisting server
 3) Add a new server
 			'''
+emails_submenu = '''
+What would you like to do?
+1) Add a new email
+2) Remove a current email
+3) Go back to the main menu
+'''
 if os.path.isfile("data.json"):
 	keepongoing = True
 	validfile = False
@@ -50,23 +74,44 @@ if os.path.isfile("data.json"):
 	if validfile:
 		while keepongoing:
 			print(mainmenu)
-			mainresponse = input("Choice>")
-			if mainresponse == "1":
+			mainresponse = getmenunumber(1,3)
+			if mainresponse == 1:
 				print("Unfinished, try again later")
-			elif mainresponse == "2":
-				addingemail = True
-				while addingemail:
+			elif mainresponse == 2:
+				print(emails_submenu)
+				emailsubmenu_input = getmenunumber(1,3)
+				if emailsubmenu_input == 1:
+					addingemail = True
 					print("Please send an email with the text ADDME to the email address MailWatcher uses.")
 					print("Press enter when you have done so.")
 					input()
-					gmaildata = gmailworker.getgmailemails(service)
-					if gmaildata == None:
-						print("We had an error getting the mail, retry?")
-						continueaddingemail = input("Y/N (We will assume Y if we get something else):")
-						if continueaddingemail == "N":
-							addingemail = False
-					elif gmaildata['resultSizeEstimate'] == 0:
-						print("We can't find any new emails in your inbox. Try sending it again.")
+					while addingemail:
+						gmaildata = gmailworker.getgmailemails(service, labels=['INBOX'])
+						if gmaildata == None:
+							print("We had an error getting the mail, retry? (1=Yes 2=No")
+							continueaddingemail = getmenunumber(1, 2)
+							if continueaddingemail == 2:
+								addingemail = False
+						elif gmaildata['resultSizeEstimate'] == 0:
+							print("We can't find any new emails in your inbox. Try sending it again.")
+							print("Press enter when you have done so.")
+							input()
+						else:
+							worthysenders = []
+							for tmpmailobj in gmaildata['messages']:
+								if tmpmailobj != None:
+									observed_email = gmailworker.getemaildata(service, tmpmailobj['id'])
+									metadata = observed_email['payload']['headers']
+									for name_data in metadata:
+										if name_data['name'] == 'From':
+											if observed_email['snippet'] == "ADDME":
+												worthysenders.append(name_data['value'])
+												gmailworker.deleteemail(service, tmpmailobj['id'])
+							for praisedsender in range(0,worthysenders.__len__()):
+								print(praisedsender, ":",  worthysenders[praisedsender])
+								addingemail = False
+						
+					
 			else:
 				print("Invalid choice.")
 	

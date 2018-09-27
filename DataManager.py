@@ -22,12 +22,11 @@ print("Email Manager\n"
       "TechdudeGames Inc.")
 print("\nNote: I recommend that you have MailWatcher stopped while preforming these actions\n")
 
-def getmenunumber(minnumber,maxnumber,prompt_text = "Input:"):
+def getmenunumber(minnumber,maxnumber,prompt_text = "\nInput:"):
 	keeptrying = True
 	attempted_input = ""
 	while keeptrying:
 		attempted_input = input(prompt_text)
-		print(attempted_input)
 		if attempted_input.isnumeric():
 			if float(attempted_input) % 1 == 0.0:
 				if (int(attempted_input) <= maxnumber) and (int(attempted_input) >= minnumber):
@@ -88,7 +87,7 @@ if os.path.isfile("data.json"):
 					while addingemail:
 						gmaildata = gmailworker.getgmailemails(service, labels=['INBOX'])
 						if gmaildata == None:
-							print("We had an error getting the mail, retry? (1=Yes 2=No")
+							print("We had an error getting the mail, retry? (1=Yes 2=No)")
 							continueaddingemail = getmenunumber(1, 2)
 							if continueaddingemail == 2:
 								addingemail = False
@@ -107,9 +106,32 @@ if os.path.isfile("data.json"):
 											if observed_email['snippet'] == "ADDME":
 												worthysenders.append(name_data['value'])
 												gmailworker.deleteemail(service, tmpmailobj['id'])
-							for praisedsender in range(0,worthysenders.__len__()):
-								print(praisedsender, ":",  worthysenders[praisedsender])
-								addingemail = False
+							if worthysenders.__len__() == 0:
+								print("It appears no emails have the ADDME text in them, retry? (1=Yes 2=No)")
+								continueaddingemail = getmenunumber(1, 2)
+								if continueaddingemail == 2:
+									addingemail = False
+							else:
+								print("Available Emails:")
+								for praisedsender in range(0, worthysenders.__len__()):
+									print(praisedsender, ":", worthysenders[praisedsender])
+								print("\nPick the number corresponding to the email you want to add.")
+								mail_seclection = getmenunumber(0, worthysenders.__len__())
+								if worthysenders[mail_seclection] in serverdata['allowed_emails']:
+									print("Silly goose, that email is already on the list :)\n")
+									print("Do you want to add another email? (1=Yes 2=No)")
+									continueaddingemail = getmenunumber(1, 2)
+									if continueaddingemail == 2:
+										addingemail = False
+								else:
+									serverdata['allowed_emails'].append(worthysenders[mail_seclection])
+									with open("data.json", 'w') as datawrite:
+										json.dump(serverdata, datawrite, indent=4)
+										datawrite.close()
+									print("Do you want to add another email? (1=Yes 2=No)")
+									continueaddingemail = getmenunumber(1, 2)
+									if continueaddingemail == 2:
+										addingemail = False
 						
 					
 			else:

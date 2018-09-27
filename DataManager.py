@@ -128,14 +128,40 @@ if os.path.isfile("data.json"):
 									with open("data.json", 'w') as datawrite:
 										json.dump(serverdata, datawrite, indent=4)
 										datawrite.close()
+									print("Email Added")
 									print("Do you want to add another email? (1=Yes 2=No)")
 									continueaddingemail = getmenunumber(1, 2)
 									if continueaddingemail == 2:
 										addingemail = False
-						
+				elif emailsubmenu_input == 2:
+					removing_emails = True
+					while removing_emails:
+						for tmpemail_index in range(0, serverdata['allowed_emails'].__len__()):
+							print(tmpemail_index, ":", serverdata['allowed_emails'][tmpemail_index])
+						print("Which email shall I remove")
+						remove_email_index = getmenunumber(0, serverdata['allowed_emails'].__len__())
+						print("Are you sure you want to remove this email? (1=Yes 2=No)")
+						confirmemailremove = getmenunumber(1, 2)
+						if confirmemailremove == 1:
+							emailtoremove = serverdata['allowed_emails'][remove_email_index]
+							while emailtoremove in serverdata['allowed_emails']:
+								serverdata['allowed_emails'].remove(emailtoremove)
+							with open("data.json", 'w') as datawrite:
+								json.dump(serverdata, datawrite, indent=4)
+								datawrite.close()
+							print("Email Removed")
+							print("Do you want to remove another email? (1=Yes 2=No)")
+							removingfeedback = getmenunumber(1, 2)
+							if removingfeedback == 2:
+								removing_emails = False
+						else:
+							print("Do you want to remove another email? (1=Yes 2=No)")
+							removingfeedback = getmenunumber(1, 2)
+							if removingfeedback == 2:
+								removing_emails = False
 					
-			else:
-				print("Invalid choice.")
+			elif mainresponse == 3:
+				keepongoing = False
 	
 else:
 	print("You seem to be missing data.json.")

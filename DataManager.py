@@ -7,8 +7,8 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 import gmailworker
 import os
-import sys
 import json
+import platform
 #We are going to need to get some emails, so we are going to need some gmail api magic.
 SCOPES = 'https://mail.google.com/'
 store = file.Storage('token.json')
@@ -39,25 +39,47 @@ def getmenunumber(minnumber,maxnumber,prompt_text = "\nInput:"):
 			print("Invalid input, try again.")
 	return int(attempted_input)
 
+def getnewpath():
+	invalid_input = True
+	while invalid_input:
+		new_path = input("New directory path:")
+		if os.path.isdir(os.path.join(new_path)):
+			return new_path
+		else:
+			print("Invalid path, please try again \n")
+def getnewfile(startdir):
+	invalid_input = True
+	while invalid_input:
+		file_name = input("New directory path:")
+		if os.path.isfile(os.path.join(startdir, file_name)):
+			return file_name
+		else:
+			print("We can't find that file, please try another filename.")
+
 mainmenu = '''
 \n
 What would you like to do?
 1) Manage Servers
 2) Manage Emails
 3) Quit
-		'''
+'''
+
 servers_submenu = '''
 \n
 What would you like to do?
-1) Modify a preexisting server
-2) Remove a preexisting server
-3) Add a new server
-			'''
+1) Display all the current servers
+2) Modify a preexisting server
+3) Remove a preexisting server
+4) Add a new server
+5) Go back to the main menu
+'''
+
 emails_submenu = '''
 What would you like to do?
-1) Add a new email
-2) Remove a current email
-3) Go back to the main menu
+1) List all the currently accepted senders
+2) Add a new email
+3) Remove a current email
+4) Go back to the main menu
 '''
 if os.path.isfile("data.json"):
 	keepongoing = True
@@ -75,17 +97,143 @@ if os.path.isfile("data.json"):
 			print(mainmenu)
 			mainresponse = getmenunumber(1,3)
 			if mainresponse == 1:
-				print("Unfinished, try again later")
+				print(servers_submenu)
+				servermain_responce = getmenunumber(1,5)
+				#Display server
+				if servermain_responce == 1:
+					if "servers" in serverdata:
+						for tmpserverdic in serverdata['servers']:
+							if "server" in tmpserverdic:
+								print("\nServer Name: ", tmpserverdic['server'])
+							else:
+								print("\nServerName: ", None)
+							if "password" in tmpserverdic:
+								print("Password: ", tmpserverdic['password'])
+							else:
+								print("Password: ", None)
+							if "directory" in tmpserverdic:
+								print("Directory: ", tmpserverdic['directory'])
+							else:
+								print("Directory: ", None)
+							if "command" in tmpserverdic:
+								print("Command: ", tmpserverdic["command"])
+							else:
+								print("Command: ", None)
+							if "port" in tmpserverdic:
+								print("Port: ", tmpserverdic['port'])
+							else:
+								print("Port:", None)
+						print("\nPress Enter to continue")
+						input()
+				
+				#Modifing crap
+				elif servermain_responce == 2:
+					if 'servers' in serverdata:
+						print("Type the server number you wish to modify.")
+						for tmpnameindex in range(serverdata['servers'].__len__()):
+							print(tmpnameindex,": ", serverdata['servers'][tmpnameindex]['server'])
+						modifing_server = True
+						selectedserverindex = getmenunumber(0, serverdata['servers'].__len__())
+						while modifing_server:
+							#This is serverdata print statements
+							#I use an if statement per to make sure I don't get an error
+							print("Type the number of the attrib you wish to modify and press Enter.")
+							if "server" in serverdata['servers'][selectedserverindex]:
+								print("\n0: Server Name: ", serverdata['servers'][selectedserverindex]['server'])
+							else:
+								print("\n0: ServerName: ", None)
+							if "password" in serverdata['servers'][selectedserverindex]:
+								print("1: Password: ", serverdata['servers'][selectedserverindex]['password'])
+							else:
+								print("1: Password: ", None)
+							if "directory" in serverdata['servers'][selectedserverindex]:
+								print("2: Directory: ", serverdata['servers'][selectedserverindex]['directory'])
+							else:
+								print("2: Directory: ", None)
+							if "command" in serverdata['servers'][selectedserverindex]:
+								print("3: Command: ", serverdata['servers'][selectedserverindex]['command'])
+							else:
+								print("3: Command: ", None)
+							if "port" in serverdata['servers'][selectedserverindex]:
+								print("4: Port: ",  serverdata['servers'][selectedserverindex]['port'])
+							else:
+								print("4: Port:", None)
+							print("5: Exit modification mode")
+							
+							
+							
+							
+							
+							attrib_to_modify = getmenunumber(0,5)
+							if attrib_to_modify == 0:
+								serverdata['servers'][selectedserverindex]['server'] = input("New name: ")
+							
+							elif attrib_to_modify == 1:
+								serverdata['servers'][selectedserverindex]['password'] = input("New password:")
+								if serverdata['servers'][selectedserverindex]['password'].__len__() == 0:
+									print("Warning, please know that having no password is a BAD IDEA\n"
+									      "Press enter to continue")
+									input()
+							
+							elif attrib_to_modify == 2:
+								serverdata['servers'][selectedserverindex]['directory'] = getnewpath()
+							
+							elif attrib_to_modify == 3:
+								#I am only useing a var for this because this can get really long
+								startdir = serverdata['servers'][selectedserverindex]['directory']
+								serverdata['servers'][selectedserverindex]['command']= getnewfile(startdir)
+							
+							elif attrib_to_modify == 4:
+								new_port = getmenunumber(0,99999999999,prompt_text="Type new port number:")
+								serverdata['servers'][selectedserverindex]['port'] = new_port
+							
+							elif attrib_to_modify == 5:
+								modifing_server = False
+								
+								
+						#Change writing
+						print("Write out the changes? (1=Yes 2=No)")
+						confirm_serverchange = getmenunumber(1,2)
+						if confirm_serverchange == 1:
+							with open("data.json", 'w') as datawrite:
+								json.dump(serverdata, datawrite, indent=4)
+								datawrite.close()
+							print("Changes written.")
+						else:
+							print("Changes not saved.")
+				
+				elif servermain_responce == 3:
+					print("Type the server number you wish to remove.")
+					for tmpnameindex in range(serverdata['servers'].__len__()):
+						print(tmpnameindex, ": ", serverdata['servers'][tmpnameindex]['server'])
+					print("Are you sure you want to remove this email? (1=Yes 2=No)")
+					confirm_serverremoval = getmenunumber(1,2)
+					if confirm_serverchange == 1:
+						serverdata['servers'].remove(serverdata['servers'][tmpnameindex])
+						print("Server Removed")
+					else:
+						print("Removal canceled.")
+				
+				elif servermain_responce == 4:
+					print("HAHA NOT FINISHED BUB")
+			
+			#Mail management
 			elif mainresponse == 2:
 				print(emails_submenu)
-				emailsubmenu_input = getmenunumber(1,3)
+				emailsubmenu_input = getmenunumber(1,4)
 				if emailsubmenu_input == 1:
+					for tmpemail_index in range(0, serverdata['allowed_emails'].__len__()):
+						print(tmpemail_index, ":", serverdata['allowed_emails'][tmpemail_index])
+						print("\nPress Enter to continue")
+						input()
+						
+				elif emailsubmenu_input == 2:
 					addingemail = True
 					print("Please send an email with the text ADDME to the email address MailWatcher uses.")
 					print("Press enter when you have done so.")
 					input()
 					while addingemail:
-						gmaildata = gmailworker.getgmailemails(service, labels=['INBOX'])
+						gmaildata = gmailworker.getgmailemails(service)
 						if gmaildata == None:
 							print("We had an error getting the mail, retry? (1=Yes 2=No)")
 							continueaddingemail = getmenunumber(1, 2)
@@ -133,7 +281,8 @@ if os.path.isfile("data.json"):
 									continueaddingemail = getmenunumber(1, 2)
 									if continueaddingemail == 2:
 										addingemail = False
-				elif emailsubmenu_input == 2:
+										
+				elif emailsubmenu_input == 3:
 					removing_emails = True
 					while removing_emails:
 						for tmpemail_index in range(0, serverdata['allowed_emails'].__len__()):
@@ -162,6 +311,12 @@ if os.path.isfile("data.json"):
 					
 			elif mainresponse == 3:
 				keepongoing = False
+			
+			#Clear crap
+			if platform.win32_ver() == ('', '', '', ''):
+				os.system("clear")
+			else:
+				os.system("cls")
 	
 else:
 	print("You seem to be missing data.json.")

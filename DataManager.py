@@ -97,6 +97,7 @@ What would you like to do?
 3) Remove a current email
 4) Go back to the main menu
 '''
+serverdata = None
 if not os.path.isfile("data.json"):
 	print("You seem to be missing data.json, creating one for you now.")
 	serverdata = {"servers": [], "allowed_emails": []}

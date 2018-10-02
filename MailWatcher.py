@@ -192,7 +192,7 @@ if continuetorun:
 						                                     verbose=False)
 						#We again check the mail while the server is running.
 						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
-						gStartBackend.sendemailservermode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
+						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
 						#We send them and server state email
 						time.sleep(mailcheckdelay)
 

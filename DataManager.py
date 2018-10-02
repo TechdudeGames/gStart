@@ -10,6 +10,7 @@ import os
 import json
 import platform
 import psutil
+import time
 #We are going to need to get some emails, so we are going to need some gmail api magic.
 SCOPES = 'https://mail.google.com/'
 store = file.Storage('token.json')
@@ -21,12 +22,18 @@ service = build('gmail', 'v1', http=creds.authorize(Http()))
 
 print("Email Manager\n"
       "TechdudeGames Inc.")
-check_for_mailwatch = True
-
-##while check_for_mailwatch:
-#	for current_pid in psutil.pids():
-#		proc = psutil.Process(current_pid)
-#		proc_data = proc.as_dict()
+print("Checking to make sure that MailWatcher is currently off.")
+for current_pid in psutil.pids():
+	try:
+		if ("python" in psutil.Process(current_pid).as_dict()['name']) or (
+				"MailWatcher" in psutil.Process(current_pid).as_dict()['name']):
+			proc = psutil.Process(current_pid)
+			proc_data = proc.as_dict()
+			if ("MailWatcher" in proc_data["cmdline"][-1]):
+				proc.kill()
+				print("Found MailWatcher, and killed it.")
+	except psutil._exceptions.NoSuchProcess:
+		pass
 #Todo, prevent us from continuing if MailWatcher is running.
 
 #

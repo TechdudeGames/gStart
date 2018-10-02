@@ -10,7 +10,6 @@ import os
 import json
 import platform
 import psutil
-import time
 #We are going to need to get some emails, so we are going to need some gmail api magic.
 SCOPES = 'https://mail.google.com/'
 store = file.Storage('token.json')

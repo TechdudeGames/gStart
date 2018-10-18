@@ -52,7 +52,6 @@ class backendfunctions:
 									                  " Looks like someone I know, let's check the body of the email")
 									checkfortext = True
 									break
-								break
 				if checkfortext:
 					msg = current_email["snippet"]  # We only need to get the first portion, so the snippet will due.
 					if msg in valid_passwords:

@@ -5,7 +5,7 @@ The only purpose of this program is to allow the management data.json data.
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-import gmailworker
+from gmailworker import mailfunctions
 import os
 import json
 import platform
@@ -300,7 +300,7 @@ while keepongoing:
 			print("Press enter when you have done so.")
 			input()
 			while addingemail:
-				gmaildata = gmailworker.getgmailemails(service)
+				gmaildata = mailfunctions.getgmailemails(service)
 				if gmaildata == None:
 					print("We had an error getting the mail, retry? (1=Yes 2=No)")
 					continueaddingemail = getmenunumber(1, 2)
@@ -316,13 +316,13 @@ while keepongoing:
 					worthysenders = []
 					for tmpmailobj in gmaildata['messages']:
 						if tmpmailobj != None:
-							observed_email = gmailworker.getemaildata(service, tmpmailobj['id'])
+							observed_email = mailfunctions.getemaildata(service, tmpmailobj['id'])
 							metadata = observed_email['payload']['headers']
 							for name_data in metadata:
 								if name_data['name'] == 'From':
 									if observed_email['snippet'] == "ADDME":
 										worthysenders.append(name_data['value'])
-										gmailworker.deleteemail(service, tmpmailobj['id'])
+										mailfunctions.deleteemail(service, tmpmailobj['id'])
 					if worthysenders.__len__() == 0:
 						print("It appears no emails have the ADDME text in them, retry? (1=Yes 2=No)")
 						continueaddingemail = getmenunumber(1, 2)

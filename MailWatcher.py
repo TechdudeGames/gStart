@@ -1,16 +1,16 @@
 #!/usr/bin/python3
-import gStartBackend
+from gStartBackend import backendfunctions
 import json
 import os
 import sys
 import time
 import multiprocessing
-
+backend = backendfunctions()
 continuetorun = True
 arguments = sys.argv[1:]
 itterationsperclear = 2880
 sendfb = True
-mailcheckdelay = 30
+mailcheckdelay = 1
 stoppass = 'ST0P'
 print('===MailWatcher===\n'
       'TechdudeGames Inc.\n'
@@ -144,7 +144,7 @@ if continuetorun:
 	serverpasses.append(stoppass)  # Append the stop password that way it is still in the list.
 	while keeponloopin:
 		servernumber = 0
-		gmailresult = gStartBackend.getmails(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
+		gmailresult =backend.getmails(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
 		# We shove the result of ^ into gmailresult
 		if gmailresult['passes'].__len__() > 0:
 
@@ -179,33 +179,33 @@ if continuetorun:
 					server_proc = multiprocessing.Process(target=serverr, args=(serverdirs[servernumber], servercmds[servernumber]))
 					#We pass server_proc the things it needs in order to function properly
 
-					gStartBackend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber],
-					                                   port_number=serverports[servernumber])
-					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
+					backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber],
+					                                      port_number=serverports[servernumber])
+					backend.deletevalidemails(idlist=gmailresult['ids'])
 					
 					server_proc.start()
 					while server_proc.is_alive():
 						#This aims at only running while the server_proc is working, but sometimes this can have issues.
 						
-						gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
-						                                     valid_passwords=serverpasses,
-						                                     verbose=False)
+						gmailresult = backend.getmails(valid_senders=allowed_senders,
+						                                        valid_passwords=serverpasses,
+						                                        verbose=False)
 						#We again check the mail while the server is running.
-						gStartBackend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
-						gStartBackend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
+						backend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
+						backend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
 						#We send them and server state email
 						time.sleep(mailcheckdelay)
 
-					gmailresult = gStartBackend.getmails(valid_senders=allowed_senders,
-					                                     valid_passwords=serverpasses,
-					                                     verbose=False)
+					gmailresult = backend.getmails(valid_senders=allowed_senders,
+					                                        valid_passwords=serverpasses,
+					                                        verbose=False)
 					# We again check the mail to remove any pesky immediate correct password emails
-					gStartBackend.deletevalidemails(idlist=gmailresult['ids'])
+					backend.deletevalidemails(idlist=gmailresult['ids'])
 					# We delete those emails
 				else:
 					# We send an email to everyone if we have the rare condition described above.
-					gStartBackend.deletevalidemails(idlist=gmailresult['ids']) #We delete the emails
-					gStartBackend.sendmultipassemail(recipients=gmailresult['senders'])
+					backend.deletevalidemails(idlist=gmailresult['ids']) #We delete the emails
+					backend.sendmultipassemail(recipients=gmailresult['senders'])
 					
 		time.sleep(mailcheckdelay)
 		counter += 1

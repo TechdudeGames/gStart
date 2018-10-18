@@ -300,7 +300,7 @@ while keepongoing:
 			print("Press enter when you have done so.")
 			input()
 			while addingemail:
-				gmaildata = mailfunctions.getgmailemails(service)
+				gmaildata = mailfunctions.getlabeledemail(service)
 				if gmaildata == None:
 					print("We had an error getting the mail, retry? (1=Yes 2=No)")
 					continueaddingemail = getmenunumber(1, 2)

@@ -92,7 +92,7 @@ class backendfunctions:
 				port_number)
 		else:
 			msgtext = "The " + servername + " has been started at " + time.strftime(
-				"%c") + "\n The current server ip is: " + serverip + str(port_number)
+				"%c") + "\n The current server ip is: " + serverip + ":" +str(port_number)
 		
 		for recip in recipients:
 			msg = mailfunctions.createmessage("gStart MailChecker", recip, "gStart Server Start Message", msgtext)

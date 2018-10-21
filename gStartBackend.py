@@ -17,7 +17,7 @@ class backendfunctions:
 			self.flow = client.flow_from_clientsecrets('credentials.json', self.SCOPES)
 			self.creds = tools.run_flow(self.flow, self.store)
 		self.service = build('gmail', 'v1', http=self.creds.authorize(Http()))
-		
+	
 	def getmail(self, valid_senders, valid_passwords=[], verbose=True):
 		'''
 		:param valid_senders: A list with valid senders
@@ -50,11 +50,11 @@ class backendfunctions:
 						if parse['name'] == 'From':
 							if verbose: print(time.strftime("%c"), " Got an email from:", parse['value'])
 							if parse['name'] in valid_senders:
-									current_sender = mailfunctions.getemailaddr(parse['value'])
-									if verbose: print(time.strftime("%c"),
+								current_sender = mailfunctions.getemailaddr(parse['value'])
+								if verbose: print(time.strftime("%c"),
 								                  " Looks like someone I know, let's check the body of the email")
-									checkfortext = True
-
+								checkfortext = True
+				
 				if checkfortext:
 					msg = current_email["snippet"]  # We only need to get the first portion, so the snippet will due.
 					if msg in valid_passwords:

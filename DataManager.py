@@ -38,9 +38,7 @@ for current_pid in psutil.pids():
 		pass
 
 
-# Todo, prevent us from continuing if MailWatcher is running.
 
-#
 
 def getmenunumber(minnumber, maxnumber, prompt_text='\nInput:'):
 	keeptrying = True

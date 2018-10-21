@@ -49,7 +49,7 @@ class backendfunctions:
 					for parse in metadata:
 						if parse['name'] == 'From':
 							if verbose: print(time.strftime("%c"), " Got an email from:", parse['value'])
-							if parse['name'] in valid_senders:
+							if parse['value'] in valid_senders:
 								current_sender = mailfunctions.getemailaddr(parse['value'])
 								if verbose: print(time.strftime("%c"),
 								                  " Looks like someone I know, let's check the body of the email")

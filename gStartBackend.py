@@ -1,9 +1,13 @@
+import time
+
+import requests
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-import requests
+
 from gmailworker import mailfunctions
-import time
+
+
 class backendfunctions:
 	def __init__(self):
 		self.SCOPES = 'https://mail.google.com/'
@@ -14,11 +18,11 @@ class backendfunctions:
 			self.creds = tools.run_flow(self.flow, self.store)
 		self.service = build('gmail', 'v1', http=self.creds.authorize(Http()))
 		
-	def getmails(self, valid_senders, valid_passwords=[], verbose=True):
+	def getmail(self, valid_senders, valid_passwords=[], verbose=True):
 		'''
 		:param valid_senders: A list with valid senders
 		:param valid_passwords: A list with valid passwords
-		:param verbose: Do you want soem print statements
+		:param verbose: Do you want some print statements
 		:return: A dictionary with a list of the correct passwords we got, the valid emails that sent them, and the id of the message.
 		'''
 		checkfortext = False
@@ -27,7 +31,7 @@ class backendfunctions:
 		lookatmail = False
 		return_dictionary = {"passes": [], "senders": [], "ids": []}
 		if unreademail == None:
-			if verbose: print(time.strftime("%c"), " Unable to get the accounts email.")
+			if verbose: print(time.strftime("%c"), " Unable to get the account's email.")
 			return return_dictionary
 		elif unreademail['resultSizeEstimate'] == 0:
 			if verbose: print(time.strftime("%c"), " No new mail to look at.")
@@ -40,18 +44,17 @@ class backendfunctions:
 				checkfortext = False
 				current_email = mailfunctions.getemaildata(self.service, selectedmail['id'])
 				current_sender = None
-				if current_email != None:
+				if current_email:
 					metadata = current_email['payload']['headers']
 					for parse in metadata:
 						if parse['name'] == 'From':
 							if verbose: print(time.strftime("%c"), " Got an email from:", parse['value'])
-							for issender in valid_senders:
-								if issender == parse['value']:
+							if parse['name'] in valid_senders:
 									current_sender = mailfunctions.getemailaddr(parse['value'])
 									if verbose: print(time.strftime("%c"),
-									                  " Looks like someone I know, let's check the body of the email")
+								                  " Looks like someone I know, let's check the body of the email")
 									checkfortext = True
-									break
+
 				if checkfortext:
 					msg = current_email["snippet"]  # We only need to get the first portion, so the snippet will due.
 					if msg in valid_passwords:
@@ -92,7 +95,7 @@ class backendfunctions:
 				port_number)
 		else:
 			msgtext = "The " + servername + " has been started at " + time.strftime(
-				"%c") + "\n The current server ip is: " + serverip + ":" +str(port_number)
+				"%c") + "\n The current server ip is: " + serverip + ":" + str(port_number)
 		
 		for recip in recipients:
 			msg = mailfunctions.createmessage("gStart MailChecker", recip, "gStart Server Start Message", msgtext)

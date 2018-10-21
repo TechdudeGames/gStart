@@ -1,10 +1,12 @@
 #!/usr/bin/python3
-from gStartBackend import backendfunctions
 import json
+import multiprocessing
 import os
 import sys
 import time
-import multiprocessing
+
+from gStartBackend import backendfunctions
+
 backend = backendfunctions()
 continuetorun = True
 arguments = sys.argv[1:]
@@ -144,7 +146,7 @@ if continuetorun:
 	serverpasses.append(stoppass)  # Append the stop password that way it is still in the list.
 	while keeponloopin:
 		servernumber = 0
-		gmailresult =backend.getmails(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
+		gmailresult =backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
 		# We shove the result of ^ into gmailresult
 		if gmailresult['passes'].__len__() > 0:
 
@@ -185,20 +187,20 @@ if continuetorun:
 					
 					server_proc.start()
 					while server_proc.is_alive():
-						#This aims at only running while the server_proc is working, but sometimes this can have issues.
+						#This aims at only running while the server_proc is working
 						
-						gmailresult = backend.getmails(valid_senders=allowed_senders,
-						                                        valid_passwords=serverpasses,
-						                                        verbose=False)
+						gmailresult = backend.getmail(valid_senders=allowed_senders,
+						                              valid_passwords=serverpasses,
+						                              verbose=False)
 						#We again check the mail while the server is running.
 						backend.deletevalidemails(idlist=gmailresult['ids'])#We delete the emails with the correct pass.
 						backend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
 						#We send them and server state email
 						time.sleep(mailcheckdelay)
 
-					gmailresult = backend.getmails(valid_senders=allowed_senders,
-					                                        valid_passwords=serverpasses,
-					                                        verbose=False)
+					gmailresult = backend.getmail(valid_senders=allowed_senders,
+					                              valid_passwords=serverpasses,
+					                              verbose=False)
 					# We again check the mail to remove any pesky immediate correct password emails
 					backend.deletevalidemails(idlist=gmailresult['ids'])
 					# We delete those emails

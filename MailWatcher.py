@@ -4,6 +4,15 @@ import multiprocessing
 import os
 import sys
 import time
+import signal
+
+def cleanexit(sig, frame):
+	print("Stopping...")
+	GPIO.cleanup()
+	sys.exit()
+
+
+signal.signal(signal.SIGINT, cleanexit)  # Catches ^c and stops
 
 from gStartBackend import backendfunctions
 

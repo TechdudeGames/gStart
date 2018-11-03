@@ -7,8 +7,7 @@ import time
 import signal
 
 def cleanexit(sig, frame):
-	print("Stopping...")
-	GPIO.cleanup()
+	print("\nStopping...")
 	sys.exit()
 
 

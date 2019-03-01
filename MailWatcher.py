@@ -45,7 +45,7 @@ if arguments != []:
 				print('Invalid perameter')
 				continuetorun = False
 		
-		if '-f' in arguments:
+		if '-t' in arguments:
 			timearg = arguments.index('-t')
 			try:
 				timearg_perm = arguments[timearg + 1]

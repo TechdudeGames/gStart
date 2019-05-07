@@ -87,7 +87,8 @@ mainmenu = '''
 What would you like to do?
 1) Manage Servers
 2) Manage Emails
-3) Quit
+3) Manage Server Background Tasks
+4) Quit
 '''
 
 servers_submenu = '''
@@ -107,10 +108,21 @@ What would you like to do?
 3) Remove a current email
 4) Go back to the main menu
 '''
+
+passthroughevents = '''
+What would you like to do?
+1) List the current background tasks.
+2) Modify a preexisting background task.
+3) Remove a background task
+4) Add a background task
+5) Go back to the main menu.
+'''
+
+
 serverdata = None
 if not os.path.isfile('data.json'):
 	print('You seem to be missing data.json, creating one for you now.')
-	serverdata = {'servers': [], 'allowed_emails': []}
+	serverdata = {'servers': [], 'allowed_emails': [], 'background_tasks' :[]}
 	with open('data.json', 'w') as datawrite:
 		json.dump(serverdata, datawrite, indent=4)
 		datawrite.close()
@@ -124,14 +136,14 @@ with open('data.json', 'r') as file:
 		except json.decoder.JSONDecodeError:
 			# This only occurs if the json file is broken.
 			print('Your data.json file is malformed, correcting it now...')
-			serverdata = {'servers': [], 'allowed_emails': []}
+			serverdata = {'servers': [], 'allowed_emails': [], 'background_tasks' :[]}
 			with open('data.json', 'w') as datawrite:
 				json.dump(serverdata, datawrite, indent=4)
 				datawrite.close()
 if type(serverdata) != dict:
 	print('Apparently, the data file is valid, however it has the incorrect starting object.')
 	print('Fixing it now by overwriting it with the correct format.')
-	serverdata = {'servers': [], 'allowed_emails': []}
+	serverdata = {'servers': [], 'allowed_emails': [], 'background_tasks' :[]}
 	with open('data.json', 'w') as datawrite:
 		json.dump(serverdata, datawrite, indent=4)
 		datawrite.close()
@@ -281,7 +293,7 @@ while keepongoing:
 			else:
 				print('Did not write server to file')
 	
-	# Mail management
+	# Mail management=======================================================================================
 	elif mainresponse == 2:
 		if 'allowed_emails' not in serverdata:
 			print(
@@ -381,8 +393,155 @@ while keepongoing:
 					removingfeedback = getmenunumber(1, 2)
 					if removingfeedback == 2:
 						removing_emails = False
-	
+
+
+	#Background task management===================
+
+
+
 	elif mainresponse == 3:
+		# Doing some
+		if 'background_tasks' not in serverdata:
+			print('Somehow, someway are you missing the background_task section. I am writing it to the file now.')
+			serverdata['background_tasks'] = []
+			with open('data.json', 'w') as datawrite:
+				json.dump(serverdata, datawrite, indent=4)
+				datawrite.close()
+		print(servers_submenu)
+		background_mainresponce = getmenunumber(1, 5)
+		# Display server
+		if background_mainresponce == 1:
+			for tmpserverdic in serverdata['background_tasks']:
+				if 'server' in tmpserverdic:
+					print('\nBackground Task Name: ', tmpserverdic['server'])
+				else:
+					print('\nBackground Task: ', None)
+				if 'password' in tmpserverdic:
+					print('Password: ', tmpserverdic['password'])
+				else:
+					print('Password: ', None)
+				if 'directory' in tmpserverdic:
+					print('Directory: ', tmpserverdic['directory'])
+				else:
+					print('Directory: ', None)
+				if 'command' in tmpserverdic:
+					print('Command: ', tmpserverdic['command'])
+				else:
+					print('Command: ', None)
+				if 'port' in tmpserverdic:
+					print('Port: ', tmpserverdic['port'])
+				else:
+					print('Port:', None)
+			print('\nPress Enter to continue')
+			input()
+
+		# Modifing crap
+		elif background_mainresponce == 2:
+			print('Type the server number you wish to modify.')
+			for tmpnameindex in range(serverdata['background_tasks'].__len__()):
+				print(tmpnameindex, ': ', serverdata['background_tasks'][tmpnameindex]['server'])
+			modifing_server = True
+			selectedserverindex = getmenunumber(0, serverdata['background_tasks'].__len__())
+			while modifing_server:
+				# This is serverdata print statements
+				# I use an if statement per to make sure I don't get an error
+				print('\nType the number of the attrib you wish to modify and press Enter.')
+				if 'server' in serverdata['background_tasks'][selectedserverindex]:
+					print('\n0: Background Task Name: ', serverdata['background_tasks'][selectedserverindex]['server'])
+				else:
+					print('\n0: ServerName: ', None)
+				if 'password' in serverdata['background_tasks'][selectedserverindex]:
+					print('1: Password: ', serverdata['background_tasks'][selectedserverindex]['password'])
+				else:
+					print('1: Password: ', None)
+				if 'directory' in serverdata['background_tasks'][selectedserverindex]:
+					print('2: Directory: ', serverdata['background_tasks'][selectedserverindex]['directory'])
+				else:
+					print('2: Directory: ', None)
+				if 'command' in serverdata['background_tasks'][selectedserverindex]:
+					print('3: Command: ', serverdata['background_tasks'][selectedserverindex]['command'])
+				else:
+					print('3: Command: ', None)
+				if 'port' in serverdata['background_tasks'][selectedserverindex]:
+					print('4: Port: ', serverdata['background_tasks'][selectedserverindex]['port'])
+				else:
+					print('4: Port:', None)
+				print('5: Exit modification mode')
+
+				attrib_to_modify = getmenunumber(0, 5)
+				if attrib_to_modify == 0:
+					serverdata['background_tasks'][selectedserverindex]['server'] = input('New name: ')
+
+				elif attrib_to_modify == 1:
+					serverdata['background_tasks'][selectedserverindex]['password'] = input('New password:')
+					if serverdata['background_tasks'][selectedserverindex]['password'].__len__() == 0:
+						print('Warning, please know that having no password is a BAD IDEA\n'
+							  'Press enter to continue')
+						input()
+
+				elif attrib_to_modify == 2:
+					serverdata['background_tasks'][selectedserverindex]['directory'] = getnewpath()
+
+				elif attrib_to_modify == 3:
+					# I am only useing a var for this because this can get really long
+					startdir = serverdata['background_tasks'][selectedserverindex]['directory']
+					serverdata['background_tasks'][selectedserverindex]['command'] = getnewfile(startdir)
+
+				elif attrib_to_modify == 4:
+					new_port = getmenunumber(0, 99999999999, prompt_text='Type new port number:')
+					serverdata['background_tasks'][selectedserverindex]['port'] = new_port
+
+				elif attrib_to_modify == 5:
+					modifing_server = False
+
+			# Change writing
+			print('Write out the changes? (1=Yes 2=No)')
+			confirm_taskchange = getmenunumber(1, 2)
+			if confirm_taskchange == 1:
+				with open('data.json', 'w') as datawrite:
+					json.dump(serverdata, datawrite, indent=4)
+					datawrite.close()
+				print('Changes written. Press Enter')
+				input()
+			else:
+				print('Changes not saved. Press Enter')
+				input()
+
+		elif background_mainresponce == 3:
+			print('Type the server number you wish to remove.')
+			for tmpnameindex in range(serverdata['background_tasks'].__len__()):
+				print(tmpnameindex, ': ', serverdata['background_tasks'][tmpnameindex]['server'])
+			background_task_index = getmenunumber(0, serverdata['background_tasks'].__len__())
+			print('Are you sure you want to remove this email? (1=Yes 2=No)')
+			confirm_server_removal = getmenunumber(1, 2)
+			if confirm_server_removal == 1:
+				serverdata['background_tasks'].remove(serverdata['background_tasks'][background_task_index])
+				with open('data.json', 'w') as datawrite:
+					json.dump(serverdata, datawrite, indent=4)
+				print('Server Removed. Press Enter')
+				input()
+			else:
+				print('Removal canceled. Press Enter')
+				input()
+
+		elif background_mainresponce == 4:
+			new_background_job = {}
+			new_background_job['server'] = input('Background Task Name: ')
+			new_background_job['password'] = input('Password: ')
+			new_background_job['directory'] = getnewpath()
+			new_background_job['command'] = getnewfile(new_background_job['directory'])
+			new_background_job['port'] = getmenunumber(0, 99999999999, prompt_text='New port number: ')
+			print('\nWrite this new background task to the data file? (1=Yes 2=No)')
+			confirm_new_server = getmenunumber(1, 2)
+			if confirm_new_server == 1:
+				serverdata['background_tasks'].append(dict(new_background_job))
+				with open('data.json', 'w') as datawrite:
+					json.dump(serverdata, datawrite, indent=4)
+					datawrite.close()
+			else:
+				print('Did not write server to file')
+
+	elif mainresponse == 4:
 		keepongoing = False
 #
 # Clear crap

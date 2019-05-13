@@ -150,7 +150,7 @@ if type(serverdata) != dict:
 
 while keepongoing:
 	print(mainmenu)
-	mainresponse = getmenunumber(1, 3)
+	mainresponse = getmenunumber(1, 4)
 	if mainresponse == 1:
 		# Doing some
 		if 'servers' not in serverdata:
@@ -407,7 +407,7 @@ while keepongoing:
 			with open('data.json', 'w') as datawrite:
 				json.dump(serverdata, datawrite, indent=4)
 				datawrite.close()
-		print(servers_submenu)
+		print(passthroughevents)
 		background_mainresponce = getmenunumber(1, 5)
 		# Display server
 		if background_mainresponce == 1:

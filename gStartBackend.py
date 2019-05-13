@@ -76,13 +76,31 @@ class backendfunctions:
 	
 	def sendmultipassemail(self, recipients=[]):
 		# We litteraly just take a list of senders and send a email to them.
-		msgtext = "Umm, we got multiple emails at once with different passwords, please try again later."
+		msgtext = "Umm, we got multiple emails at once with different correct passwords, please try again later."
 		for recip in recipients:
 			msg = mailfunctions.createmessage("gStart MailChecker", recip, "gStart Multipassword Error", msgtext)
 			mailfunctions.sendmessage(self.service, msg)
+
+	def sendemailcorrectpassbackground(self, recipients=[], servername="", port_number=0000):
+		# We litteraly just take a list of senders and send a email to them.
+		try:
+			serverip = requests.get('http://ip.42.pl/raw').text
+		except:
+			# I am highly aware how broad this except statement is, but the amount of different exceptions this thing can throw is astounding.
+			serverip = "0.0.0.0"
+
+		if serverip == "0.0.0.0":
+			msgtext = "The background task is online, but we can't figure out the ip address. All we know is the port:" + str(
+				port_number)
+		else:
+			msgtext = "The " + servername + " has been started at " + time.strftime(
+				"%c") + "\n The current background task ip is: " + serverip + ":" + str(port_number)
+
+		for recip in recipients:
+			msg = mailfunctions.createmessage("gStart MailChecker", recip, "gStart Server Start Message", msgtext)
+			mailfunctions.sendmessage(self.service, msg)
 	
 	def sendemailcorrectpass(self, recipients=[], servername="", port_number=0000):
-		# We litteraly just take a list of senders and send a email to them.
 		# We litteraly just take a list of senders and send a email to them.
 		try:
 			serverip = requests.get('http://ip.42.pl/raw').text
@@ -106,14 +124,13 @@ class backendfunctions:
 		try:
 			serverip = requests.get('http://ip.42.pl/raw').text
 		except:
-			# I am higly aware how broad this is, but there are so many exceptions when requests decided to die.
+			# I am higly aware how broad this is, but there are so many exceptions when request decides to die.
 			serverip = "0.0.0.0"
 		
 		if serverip == "0.0.0.0":
 			msgtext = "A server is online, however we are unable to see what it's ip address is"
 		else:
-			msgtext = "A server is already online :)" + "\n The current server ip is: " + serverip + ":" + str(
-				port_number)
+			msgtext = "A server is already online :)" + "\n The current server ip is: " + serverip + ":" + str(port_number)
 		
 		for recip in recipients:
 			msg = mailfunctions.createmessage("gStart MailChecker", recip, "gStart Server Idler Message", msgtext)

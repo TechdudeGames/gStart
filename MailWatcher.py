@@ -71,10 +71,11 @@ if arguments != []:
 
 # This is the serverr that starts the server. It is on a separate thread to allow us to check for correct emails while
 # This guy is waiting for the server to stop.
-def serverr(dir, cmd):
+def offmainthread(dir, cmd):
 	os.chdir(dir)
 	os.system(cmd)
 
+backgroundtask_List = []
 
 server_proc = None
 counter = 0
@@ -87,6 +88,11 @@ if continuetorun:
 	serverdirs = []
 	servercmds = []
 	serverports = []
+	backgroundnames= []
+	backgroundpasses= []
+	backgrounddirs= []
+	backgroundcmds= []
+	backgroundports = []
 	# data.json working crap
 	
 	if os.path.isfile('data.json'):
@@ -143,6 +149,44 @@ if continuetorun:
 				# This is for when we don't have a email list
 				print('The json file is missing the allowed_emails array. Please use DataManager to add one.')
 				keeponloopin = False
+
+			if "background_tasks" in serverdata:
+				for tmpbackgroundtask in serverdata['servers']:
+					# tmp server becomes the dictionary with all the needed data.
+					if 'server' in tmpbackgroundtask:
+						servernames.append(tmpbackgroundtask['server'])
+						backgroundnames.append(tmpbackgroundtask['server'])
+					else:
+						servernames.append(None)
+						backgroundnames.append(None)
+
+					if 'password' in tmpbackgroundtask:
+						serverpasses.append(tmpbackgroundtask['password'])
+						backgroundnames.append(tmpbackgroundtask['password'])
+					else:
+						serverpasses.append(None)
+						backgroundnames.append(None)
+
+					if 'directory' in tmpbackgroundtask:
+						serverdirs.append(tmpbackgroundtask['directory'])
+						backgroundnames.append(tmpbackgroundtask['directory'])
+					else:
+						serverdirs.append(None)
+						backgroundnames.append(None)
+
+					if 'command' in tmpbackgroundtask:
+						servercmds.append(tmpbackgroundtask['command'])
+						backgroundnames.append(tmpbackgroundtask['command'])
+					else:
+						servercmds.append(None)
+						backgroundnames.append(None)
+
+					if 'port' in tmpbackgroundtask:
+						serverports.append(tmpbackgroundtask['port'])
+						backgroundnames.append(None)
+					else:
+						serverports.append(None)
+						backgroundnames.append(None)
 		
 		else:
 			keeponloopin = False
@@ -165,15 +209,15 @@ if continuetorun:
 			
 			else:
 				'''
-				This next part is purly to prevent a freak issue from occuring if two people were to
-				simaltaniously send two emails with two different correct passwords.
+				This next part is purely to prevent a freak issue from occuring if two people were to
+				send two emails with two different correct passwords.
 				'''
 				firstpass = gmailresult['passes'][0]  # We get the first password we got and compare it to the others
 				singlepass = True
 				for checkingpass in gmailresult['passes'][1:]:
 					if firstpass != checkingpass:
 						singlepass = False  # Somehow we have two emails with different passwords. :9
-				
+
 				if singlepass:
 					# We only recieved one of a certain pass.
 					
@@ -186,28 +230,39 @@ if continuetorun:
 					if server_proc:
 						if server_proc.is_alive():
 							server_proc.join()  # Somehow the server process is running, so we join in to prevent something bad from happening.
-					server_proc = multiprocessing.Process(target=serverr,
-					                                      args=(serverdirs[servernumber], servercmds[servernumber]))
+					server_proc = multiprocessing.Process(target=offmainthread, args=(serverdirs[servernumber], servercmds[servernumber]))
 					# We pass server_proc the things it needs in order to function properly
 					
-					backend.sendemailcorrectpass(recipients=gmailresult['senders'],
-					                             servername=servernames[servernumber],
-					                             port_number=serverports[servernumber])
+					backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=serverports[servernumber])
 					backend.deletevalidemails(idlist=gmailresult['ids'])
-					
 					server_proc.start()
 					while server_proc.is_alive():
 						# This aims at only running while the server_proc is working
-						
-						gmailresult = backend.getmail(valid_senders=allowed_senders,
-						                              valid_passwords=serverpasses,
-						                              verbose=False)
+						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=False)
+						#This it the section where background tasks are checked for and started.
+						if gmailresult['passes'].__len__() > 0:
+							firstpass_background = gmailresult['passes'][0]  # We get the first password we got and compare it to the others
+							singlepass = True
+							for checkingpass in gmailresult['passes'][1:]:
+								if firstpass_background != checkingpass:
+									singlepass_background = False  # Somehow we have two emails with different passwords. :9
+
+							if singlepass_background:
+								for investigated_backgroundtask in range(0, servernames.__len__()):
+									if gmailresult['passes'][0] == serverpasses[investigated_backgroundtask]:
+										backgroundtask_number = investigated_backgroundtask
+							backgroundtask_List.append(multiprocessing.process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
+							for tmptask in range(0,backgroundtask_List.__len__()):
+								if backgroundtask_List[tmptask].is_alive() != True:
+									backgroundtask_List.pop(tmptask)
 						# We again check the mail while the server is running.
-						backend.deletevalidemails(
-							idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
-						backend.sendemailidlemode(recipients=gmailresult['senders'],
-						                          port_number=serverports[servernumber])
+
+						backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
+
+						backend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])
+
 						# We send them and server state email
+
 						time.sleep(mailcheckdelay)
 					
 					gmailresult = backend.getmail(valid_senders=allowed_senders,

@@ -151,7 +151,7 @@ if continuetorun:
 				keeponloopin = False
 
 			if "background_tasks" in serverdata:
-				for tmpbackgroundtask in serverdata['servers']:
+				for tmpbackgroundtask in serverdata['background_tasks']:
 					# tmp server becomes the dictionary with all the needed data.
 					if 'server' in tmpbackgroundtask:
 						servernames.append(tmpbackgroundtask['server'])
@@ -235,8 +235,10 @@ if continuetorun:
 					
 					backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=serverports[servernumber])
 					backend.deletevalidemails(idlist=gmailresult['ids'])
+					print("GOTTE")
 					server_proc.start()
 					while server_proc.is_alive():
+						print("GOTTE")
 						# This aims at only running while the server_proc is working
 						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=backgroundpasses, verbose=False)
 						#This it the section where background tasks are checked for and started.

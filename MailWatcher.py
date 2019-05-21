@@ -254,7 +254,7 @@ if continuetorun:
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
-							backgroundtask_List.append(multiprocessing.process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
+							backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
 							print("GOTTE1")
 							backgroundtask_List[-1].start()
 							for tmptask in range(0,backgroundtask_List.__len__()):

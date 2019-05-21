@@ -162,31 +162,31 @@ if continuetorun:
 
 					if 'password' in tmpbackgroundtask:
 						serverpasses.append(tmpbackgroundtask['password'])
-						backgroundnames.append(tmpbackgroundtask['password'])
+						backgroundpasses.append(tmpbackgroundtask['password'])
 					else:
 						serverpasses.append(None)
-						backgroundnames.append(None)
+						backgroundpasses.append(None)
 
 					if 'directory' in tmpbackgroundtask:
 						serverdirs.append(tmpbackgroundtask['directory'])
-						backgroundnames.append(tmpbackgroundtask['directory'])
+						backgrounddirs.append(tmpbackgroundtask['directory'])
 					else:
 						serverdirs.append(None)
-						backgroundnames.append(None)
+						backgrounddirs.append(None)
 
 					if 'command' in tmpbackgroundtask:
 						servercmds.append(tmpbackgroundtask['command'])
-						backgroundnames.append(tmpbackgroundtask['command'])
+						backgroundcmds.append(tmpbackgroundtask['command'])
 					else:
 						servercmds.append(None)
-						backgroundnames.append(None)
+						backgroundcmds.append(None)
 
 					if 'port' in tmpbackgroundtask:
 						serverports.append(tmpbackgroundtask['port'])
-						backgroundnames.append(None)
+						backgroundports.append(None)
 					else:
 						serverports.append(None)
-						backgroundnames.append(None)
+						backgroundports.append(None)
 		
 		else:
 			keeponloopin = False

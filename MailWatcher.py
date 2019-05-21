@@ -183,7 +183,7 @@ if continuetorun:
 
 					if 'port' in tmpbackgroundtask:
 						serverports.append(tmpbackgroundtask['port'])
-						backgroundports.append(None)
+						backgroundports.append(tmpbackgroundtask['port'])
 					else:
 						serverports.append(None)
 						backgroundports.append(None)
@@ -252,7 +252,7 @@ if continuetorun:
 									singlepass_background = False  # Somehow we have two emails with different passwords. :9
 
 							if singlepass_background:
-								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=backgroundports[servernumber])
+								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=backgroundports[servernumber], port_number=backgroundports[servernumber])
 								backend.deletevalidemails(idlist=gmailresult['ids'])
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
@@ -260,7 +260,7 @@ if continuetorun:
 							backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
 							print("GOTTE1")
 							print(backgroundtask_List.__len__())
-							backgroundtask_List[-1].start()
+							backgroundtask_List[backgroundtask_List.__len__()-1].start()
 							for tmptask in range(0,backgroundtask_List.__len__()):
 								if backgroundtask_List[tmptask].is_alive() != True:
 									backgroundtask_List.pop(tmptask)

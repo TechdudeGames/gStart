@@ -242,16 +242,18 @@ if continuetorun:
 						#This it the section where background tasks are checked for and started.
 						if gmailresult['passes'].__len__() > 0:
 							firstpass_background = gmailresult['passes'][0]  # We get the first password we got and compare it to the others
-							singlepass = True
+							singlepass_background = True
 							for checkingpass in gmailresult['passes'][1:]:
 								if firstpass_background != checkingpass:
 									singlepass_background = False  # Somehow we have two emails with different passwords. :9
 
 							if singlepass_background:
-								for investigated_backgroundtask in range(0, servernames.__len__()):
+								backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=serverports[servernumber])
+								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == serverpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
 							backgroundtask_List.append(multiprocessing.process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
+							backgroundtask_List[-1].start()
 							for tmptask in range(0,backgroundtask_List.__len__()):
 								if backgroundtask_List[tmptask].is_alive() != True:
 									backgroundtask_List.pop(tmptask)

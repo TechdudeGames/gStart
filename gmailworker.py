@@ -20,7 +20,8 @@ class mailfunctions:
 			except googleapiclient.errors.HttpError:
 				time.sleep(2)
 		return mail
-	
+
+
 	def getemaildata(service, messageid):
 		'''
 		:param service: The gmail service variable used to access the gmail account

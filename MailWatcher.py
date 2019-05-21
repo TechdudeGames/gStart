@@ -240,7 +240,7 @@ if continuetorun:
 					while server_proc.is_alive():
 						print("GOTTE")
 						# This aims at only running while the server_proc is working
-						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=backgroundpasses, verbose=False)
+						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=backgroundpasses)
 						#This it the section where background tasks are checked for and started.
 						if gmailresult['passes'].__len__() > 0:
 							firstpass_background = gmailresult['passes'][0]  # We get the first password we got and compare it to the others

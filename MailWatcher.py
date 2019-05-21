@@ -253,6 +253,7 @@ if continuetorun:
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
 							backgroundtask_List.append(multiprocessing.process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
+							print("GOTTE")
 							backgroundtask_List[-1].start()
 							for tmptask in range(0,backgroundtask_List.__len__()):
 								if backgroundtask_List[tmptask].is_alive() != True:

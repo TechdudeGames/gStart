@@ -257,11 +257,13 @@ if continuetorun:
 										backgroundtask_number = investigated_backgroundtask
 							backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
 							print("GOTTE1")
+							print(backgroundtask_List.__len__())
 							backgroundtask_List[-1].start()
 							for tmptask in range(0,backgroundtask_List.__len__()):
 								if backgroundtask_List[tmptask].is_alive() != True:
 									backgroundtask_List.pop(tmptask)
 						# We again check the mail while the server is running.
+						time.sleep(0.5)
 						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses)
 						backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
 

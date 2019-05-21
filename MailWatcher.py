@@ -250,7 +250,7 @@ if continuetorun:
 							if singlepass_background:
 								backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=serverports[servernumber])
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
-									if gmailresult['passes'][0] == serverpasses[investigated_backgroundtask]:
+									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
 							backgroundtask_List.append(multiprocessing.process(target=offmainthread, args=(backgrounddirs[servernumber], backgroundports[servernumber])))
 							backgroundtask_List[-1].start()

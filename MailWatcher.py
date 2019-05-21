@@ -251,6 +251,7 @@ if continuetorun:
 
 							if singlepass_background:
 								backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=backgroundports[servernumber])
+								backend.deletevalidemails(idlist=gmailresult['ids'])
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
@@ -261,7 +262,7 @@ if continuetorun:
 								if backgroundtask_List[tmptask].is_alive() != True:
 									backgroundtask_List.pop(tmptask)
 						# We again check the mail while the server is running.
-
+						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses)
 						backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
 
 						backend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])

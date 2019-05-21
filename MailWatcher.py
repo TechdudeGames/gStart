@@ -240,9 +240,11 @@ if continuetorun:
 					while server_proc.is_alive():
 						print("GOTTE")
 						# This aims at only running while the server_proc is working
+						print("GETTING MAIL")
 						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=backgroundpasses)
 						#This it the section where background tasks are checked for and started.
 						if gmailresult['passes'].__len__() > 0:
+							print("Entering SUBMODE")
 							firstpass_background = gmailresult['passes'][0]  # We get the first password we got and compare it to the others
 							singlepass_background = True
 							for checkingpass in gmailresult['passes'][1:]:
@@ -250,7 +252,7 @@ if continuetorun:
 									singlepass_background = False  # Somehow we have two emails with different passwords. :9
 
 							if singlepass_background:
-								backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=backgroundports[servernumber])
+								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=backgroundports[servernumber])
 								backend.deletevalidemails(idlist=gmailresult['ids'])
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
@@ -264,6 +266,7 @@ if continuetorun:
 									backgroundtask_List.pop(tmptask)
 						# We again check the mail while the server is running.
 						time.sleep(0.5)
+						print("otherremove")
 						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses)
 						backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
 

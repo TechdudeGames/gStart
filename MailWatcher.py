@@ -257,12 +257,14 @@ if continuetorun:
 										backgroundtask_number = investigated_backgroundtask
 								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=backgroundnames[backgroundtask_number], port_number=backgroundports[backgroundtask_number])
 								backend.deletevalidemails(idlist=gmailresult['ids'])
-
+								time.sleep(0.5)
 								backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
 								print("GOTTE1")
 								print(backgroundtask_List.__len__())
 								backgroundtask_List[backgroundtask_List.__len__()-1].start()
+								print("Started the background task")
 								for tmptask in range(0,backgroundtask_List.__len__()):
+									print(tmptask)
 									if backgroundtask_List[tmptask].is_alive() != True:
 										backgroundtask_List.pop(tmptask)
 							# TODO add the else statement for this

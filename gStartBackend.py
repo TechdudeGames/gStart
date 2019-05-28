@@ -62,6 +62,7 @@ class backendfunctions:
 						return_dictionary["passes"].append(str(msg))
 						return_dictionary["senders"].append(str(current_sender))
 						return_dictionary["ids"].append(str(selectedmail["id"]))
+						mailfunctions.markasread(self.service, messageid=selectedmail["id"])
 					else:
 						if verbose: print(time.strftime("%c"), " Password was incorrect.")
 						mailfunctions.markasread(self.service, messageid=selectedmail["id"])

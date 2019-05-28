@@ -266,7 +266,10 @@ if continuetorun:
 								for tmptask in range(0,backgroundtask_List.__len__()):
 									print(tmptask)
 									if backgroundtask_List[tmptask].is_alive() != True:
-										backgroundtask_List.pop(tmptask)
+										backgroundtask_List[tmptask] = None #Turn the process object into nothing
+								while None in backgroundtask_List:
+									indexOfNone = backgroundtask_List.index(None)
+									backgroundtask_List.pop(indexOfNone)
 							# TODO add the else statement for this
 						# We again check the mail while the server is running.
 						time.sleep(0.5)

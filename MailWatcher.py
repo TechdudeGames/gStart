@@ -252,18 +252,20 @@ if continuetorun:
 									singlepass_background = False  # Somehow we have two emails with different passwords. :9
 
 							if singlepass_background:
-								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=backgroundports[servernumber], port_number=backgroundports[servernumber])
-								backend.deletevalidemails(idlist=gmailresult['ids'])
 								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
-							backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
-							print("GOTTE1")
-							print(backgroundtask_List.__len__())
-							backgroundtask_List[backgroundtask_List.__len__()-1].start()
-							for tmptask in range(0,backgroundtask_List.__len__()):
-								if backgroundtask_List[tmptask].is_alive() != True:
-									backgroundtask_List.pop(tmptask)
+								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=backgroundnames[backgroundtask_number], port_number=backgroundports[backgroundtask_number])
+								backend.deletevalidemails(idlist=gmailresult['ids'])
+
+								backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
+								print("GOTTE1")
+								print(backgroundtask_List.__len__())
+								backgroundtask_List[backgroundtask_List.__len__()-1].start()
+								for tmptask in range(0,backgroundtask_List.__len__()):
+									if backgroundtask_List[tmptask].is_alive() != True:
+										backgroundtask_List.pop(tmptask)
+							# TODO add the else statement for this
 						# We again check the mail while the server is running.
 						time.sleep(0.5)
 						print("otherremove")

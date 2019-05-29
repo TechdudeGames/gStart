@@ -18,7 +18,7 @@ class backendfunctions:
 			self.creds = tools.run_flow(self.flow, self.store)
 		self.service = build('gmail', 'v1', http=self.creds.authorize(Http()))
 	
-	def getmail(self, valid_senders, valid_passwords=[], verbose=True):
+	def getmail(self, valid_senders, valid_passwords=[], verbose=True, markasreadFlag=True):
 		'''
 		:param valid_senders: A list with valid senders
 		:param valid_passwords: A list with valid passwords
@@ -62,12 +62,12 @@ class backendfunctions:
 						return_dictionary["passes"].append(str(msg))
 						return_dictionary["senders"].append(str(current_sender))
 						return_dictionary["ids"].append(str(selectedmail["id"]))
-						mailfunctions.markasread(self.service, messageid=selectedmail["id"])
+						if markasreadFlag: mailfunctions.markasread(self.service, messageid=selectedmail["id"])
 					else:
 						if verbose: print(time.strftime("%c"), " Password was incorrect.")
-						mailfunctions.markasread(self.service, messageid=selectedmail["id"])
+						if markasreadFlag:mailfunctions.markasread(self.service, messageid=selectedmail["id"])
 				else:
-					mailfunctions.markasread(self.service, messageid=selectedmail["id"])
+					if markasreadFlag:mailfunctions.markasread(self.service, messageid=selectedmail["id"])
 			return return_dictionary
 	
 	def deletevalidemails(self, idlist=[]):

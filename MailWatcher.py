@@ -196,6 +196,8 @@ if continuetorun:
 		keeponloopin = False
 	
 	serverpasses.append(stoppass)  # Append the stop password that way it is still in the list.
+	numberOfServers=servernames.__len__()
+	numberOfBackgroundTasks = backgroundnames.__len__()
 	while keeponloopin:
 		servernumber = 0
 		gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses, verbose=True)
@@ -221,7 +223,7 @@ if continuetorun:
 				if singlepass:
 					# We only recieved one of a certain pass.
 					
-					for investigated_server in range(0, servernames.__len__()):
+					for investigated_server in range(0, numberOfServers):
 						if gmailresult['passes'][0] == serverpasses[investigated_server]:
 							servernumber = investigated_server
 					# We find out which server we are going to be starting.
@@ -252,7 +254,7 @@ if continuetorun:
 									singlepass_background = False  # Somehow we have two emails with different passwords. :9
 
 							if singlepass_background:
-								for investigated_backgroundtask in range(0, backgroundnames.__len__()):
+								for investigated_backgroundtask in range(0, numberOfBackgroundTasks):
 									if gmailresult['passes'][0] == backgroundpasses[investigated_backgroundtask]:
 										backgroundtask_number = investigated_backgroundtask
 								backend.sendemailcorrectpassbackground(recipients=gmailresult['senders'], servername=backgroundnames[backgroundtask_number], port_number=backgroundports[backgroundtask_number])
@@ -260,9 +262,7 @@ if continuetorun:
 								time.sleep(0.5)
 								backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
 								print("GOTTE1")
-								print(backgroundtask_List.__len__())
 								backgroundtask_List[backgroundtask_List.__len__()-1].start()
-								print("Started the background task")
 								for tmptask in range(0,backgroundtask_List.__len__()):
 									print(tmptask)
 									if backgroundtask_List[tmptask].is_alive() != True:
@@ -274,7 +274,15 @@ if continuetorun:
 						# We again check the mail while the server is running.
 						time.sleep(0.5)
 						print("otherremove")
-						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=serverpasses)
+						#We are avoiding accidentally removing soon to send
+						if numberOfBackgroundTasks > 0:
+							stopIndex = numberOfServers - numberOfBackgroundTasks - 3 #This only works if you have background tasks
+							#3 comes from 1 to offset numberOfServers, 1 to offset numberOfBackgroundTasks, and 1 to offset the list index with the :
+						else:
+							stopIndex = numberOfServers - 2
+							#2 comes from the 1 to offset numberOfServers and 1 to offsect the list index with the :
+
+						gmailresult = backend.getmail(valid_senders=allowed_senders[:stopIndex], valid_passwords=serverpasses,markasreadFlag=False)
 						backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails with the correct pass.
 
 						backend.sendemailidlemode(recipients=gmailresult['senders'], port_number=serverports[servernumber])

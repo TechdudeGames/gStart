@@ -270,7 +270,9 @@ if continuetorun:
 								while None in backgroundtask_List:
 									indexOfNone = backgroundtask_List.index(None)
 									backgroundtask_List.pop(indexOfNone)
-							# TODO add the else statement for this
+							else:
+								backend.deletevalidemails(idlist=gmailresult['ids'])  # We delete the emails
+								backend.sendemailcorrectpass(recipients=gmailresult['senders'])
 						# We again check the mail while the server is running.
 						time.sleep(0.5)
 						print("otherremove")

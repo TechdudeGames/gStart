@@ -234,13 +234,12 @@ if continuetorun:
 							server_proc.join()  # Somehow the server process is running, so we join in to prevent something bad from happening.
 					server_proc = multiprocessing.Process(target=offmainthread, args=(serverdirs[servernumber], servercmds[servernumber]))
 					# We pass server_proc the things it needs in order to function properly
-					
 					backend.sendemailcorrectpass(recipients=gmailresult['senders'], servername=servernames[servernumber], port_number=serverports[servernumber])
 					backend.deletevalidemails(idlist=gmailresult['ids'])
-					print("GOTTE")
+					#print("GOTTE")
 					server_proc.start()
 					while server_proc.is_alive():
-						print("GOTTE")
+						#print("GOTTE")
 						# This aims at only running while the server_proc is working
 						print("GETTING MAIL")
 						gmailresult = backend.getmail(valid_senders=allowed_senders, valid_passwords=backgroundpasses)
@@ -261,7 +260,7 @@ if continuetorun:
 								backend.deletevalidemails(idlist=gmailresult['ids'])
 								time.sleep(0.5)
 								backgroundtask_List.append(multiprocessing.Process(target=offmainthread, args=(backgrounddirs[backgroundtask_number], backgroundcmds[backgroundtask_number])))
-								print("GOTTE1")
+								#print("GOTTE1")
 								backgroundtask_List[backgroundtask_List.__len__()-1].start()
 								for tmptask in range(0,backgroundtask_List.__len__()):
 									print(tmptask)
@@ -275,7 +274,7 @@ if continuetorun:
 								backend.sendemailcorrectpass(recipients=gmailresult['senders'])
 						# We again check the mail while the server is running.
 						time.sleep(0.5)
-						print("otherremove")
+						#print("otherremove")
 						#We are avoiding accidentally removing soon to send
 						if numberOfBackgroundTasks > 0:
 							stopIndex = numberOfServers - numberOfBackgroundTasks - 3 #This only works if you have background tasks
